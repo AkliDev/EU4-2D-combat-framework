@@ -1,0 +1,28 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "FightanProject",
+	"Description": "Framework for 2d combat creation",
+	"Category": "Other",
+	"CreatedBy": "AkliDev",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "FightanProject",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "FightanProjectEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
