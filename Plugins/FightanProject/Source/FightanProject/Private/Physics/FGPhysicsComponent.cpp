@@ -3,6 +3,7 @@
 
 #include "Physics/FGPhysicsComponent.h"
 #include "Game/FightanProjectGameModeBase.h"
+#include "Character/FightPawn.h"
 
 // Sets default values for this component's properties
 UFGPhysicsComponent::UFGPhysicsComponent()
@@ -54,7 +55,8 @@ void UFGPhysicsComponent::UpdateLocation()
 
 void UFGPhysicsComponent::AddGravity(float DeltaTime)
 {
-	Velocity.Z -= 1500 * DeltaTime;
+	if (OwningPawn->GetCharacterStatsComponent() != nullptr)
+		Velocity.Z -= OwningPawn->GetCharacterStatsComponent()->Weight * DeltaTime;
 }
 
 // Called every frame
@@ -64,7 +66,6 @@ void UFGPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	// ...
 	SetPushBoxZOffsetOnChange();
-	AddGravity(DeltaTime);
 
 	CheckVelocityFlip();
 	PreviousVelocity = Velocity;
@@ -73,10 +74,20 @@ void UFGPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 void UFGPhysicsComponent::CheckVelocityFlip()
 {
 	if (FMath::Sign(PreviousVelocity.X) != FMath::Sign(Velocity.X))
-		OnVelpcityFlipX.Broadcast(Events::ON_VELOCITY_FLIP_X);
+	{
+		if (Velocity.X > 0)
+			OnPhysicsEvent.Broadcast(Events::ON_VELOCITY_FLIP_X_POSITIVE);
+		else
+			OnPhysicsEvent.Broadcast(Events::ON_VELOCITY_FLIP_X_NEGATIVE);
+	}
 
 	if (FMath::Sign(PreviousVelocity.Z) != FMath::Sign(Velocity.Z))
-		OnVelpcityFlipX.Broadcast(Events::ON_VELOCITY_FLIP_Z);
+	{
+		if (Velocity.Z > 0)
+			OnPhysicsEvent.Broadcast(Events::ON_VELOCITY_FLIP_Z_POSITIVE);
+		else
+			OnPhysicsEvent.Broadcast(Events::ON_VELOCITY_FLIP_Z_NEGATIVE);
+	}
 }
 
 void UFGPhysicsComponent::FireCollisionEvents(FVector Overlap)
@@ -88,30 +99,34 @@ void UFGPhysicsComponent::FireCollisionEvents(FVector Overlap)
 	if (Overlap.Z < 0)
 	{
 		Velocity.Z = 0;
-		OnCollisionUp.Broadcast(Events::ON_COLLISION_UP);
+		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_UP);
 	}
 
 	//Down Collison
 	if (Overlap.Z > 0)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TEXT("Down"));
 		Velocity.Z = 0;
-		OnCollisionDown.Broadcast(Events::ON_COLLISION_DOWN);
+		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_DOWN);
 	}
 
 	//Left Collison
 	if (Overlap.X > 0)
 	{
 		Velocity.X = 0;
-		OnCollisionBehind.Broadcast(Events::ON_COLLISION_BEHIND);
+		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_BEHIND);
 	}
 
 	//Right Collision
 	if (Overlap.X < 0)
 	{
 		Velocity.X = 0;
-		OnCollisionFront.Broadcast(Events::ON_COLLISION_FRONT);
-	}	
+		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_FRONT);
+	}
+}
+
+void UFGPhysicsComponent::SetOwningPawn(AFightPawn* owningPawn)
+{
+	OwningPawn = owningPawn;
 }
 
 void UFGPhysicsComponent::SetPushBox(UPushBoxComponent * pushBox)
@@ -129,4 +144,9 @@ void UFGPhysicsComponent::SetContainer(UCharacterContainer * container)
 void UFGPhysicsComponent::SetVelocity(FVector velocityVector)
 {
 	Velocity = velocityVector;
+}
+
+void UFGPhysicsComponent::AddVelocity(FVector velocityVector)
+{
+	Velocity += velocityVector;
 }

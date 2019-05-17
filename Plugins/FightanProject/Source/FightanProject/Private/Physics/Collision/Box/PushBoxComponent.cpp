@@ -19,5 +19,4 @@ void UPushBoxComponent::OnUpdateTransform(EUpdateTransformFlags UpdateTransformF
 {
 	Super::OnUpdateTransform(UpdateTransformFlags, Teleport);
 	OnTransformChange.Broadcast();
-	UE_LOG(LogTemp, Warning, TEXT("Launch"));
 }

@@ -2,6 +2,11 @@
 
 #include "StateMachine/FightPawnState.h"
 
+UFightPawnState::UFightPawnState()
+{
+	bLoops = true;
+}
+
 /// <summary>Itterates through links of this state and passes value to these links to be checked</summary>
 /// <param name="sel">Reference to the subject pawn and Input buffer conponent preferably of the same pawn </param>  
 /// <returns>FStateMachineResult</returns>  

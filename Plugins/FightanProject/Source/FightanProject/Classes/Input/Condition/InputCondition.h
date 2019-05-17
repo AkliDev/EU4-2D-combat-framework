@@ -31,6 +31,22 @@ public:
 		TArray<InputState> ValidStates;
 };
 
+
+USTRUCT()
+struct FIGHTANPROJECT_API FDirectionCondition
+{
+	GENERATED_BODY()
+
+public:
+	//Button Input
+	UPROPERTY(EditAnywhere)
+		DirectionNotation RequiredDirections;
+
+	//Button State
+	UPROPERTY(EditAnywhere)
+		TArray<InputState> ValidStates;
+};
+
 USTRUCT()
 struct FIGHTANPROJECT_API FInputStamp
 {
@@ -93,11 +109,11 @@ protected:
 
 	//Required current direction held for this condition to be true
 	UPROPERTY(EditAnywhere)
-		TArray<DirectionNotation> ValidCurrentHoldDirections;
+		TArray<FDirectionCondition> ValidDirections;
 
 	//Required current button pressed for this condition to be true
 	UPROPERTY(EditAnywhere)
-		TArray<FButtonCondition> RequiredCurrentButtons;
+		TArray<FButtonCondition> RequiredButtons;
 	
 public: 
 	//Calls this class private validation methods

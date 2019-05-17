@@ -21,13 +21,15 @@ class FIGHTANPROJECT_API UFightPawnState : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	UFightPawnState();
+
 	UPROPERTY(EditAnywhere)
 		FName StateName;
 
 	// Instructions for behavior
 	UPROPERTY(EditAnywhere)
 		UStateBehaviourData* StateBehaviour;
-	//TODO: Collision datej  
+	//TODO: Collision date
 	
 	// The animation that is associated with this state
 	UPROPERTY(EditAnywhere)
@@ -37,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		UStateChangeComponent* StateChangeComponent;
 
-	// whether or not the state loops on it self
+	//Should the animation of this state loop?
 	UPROPERTY(EditAnywhere)
 		uint32 bLoops : 1;
 

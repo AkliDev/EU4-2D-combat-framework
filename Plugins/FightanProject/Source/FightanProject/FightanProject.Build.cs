@@ -38,10 +38,7 @@ public class FightanProject : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-				"Slate",
-				"SlateCore",
                 "Paper2D",
-                "AssetTools"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

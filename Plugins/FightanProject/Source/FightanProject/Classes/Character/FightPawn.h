@@ -16,6 +16,7 @@
 #include "Character/CharacterStatsComponent.h"
 #include "StateMachine/Instructions/StateInstructionBase.h"
 #include "StateMachine/Events/EventEnums.h"
+#include "CharacterStatsComponent.h"
 #include "FightPawn.generated.h"
 
 //Forward declaration to prevent circular dependency 
@@ -34,6 +35,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere)
+		UCharacterStatsComponent* Stats;
 
 	UPROPERTY(EditAnywhere)
 		UFightPawnState* CurrentState;
@@ -87,11 +91,11 @@ protected:
 	UFUNCTION()
 		void CheckEventStates(Events event);
 
+	UFUNCTION()
+		void CheckOnFinishState();
+
 	UFUNCTION(BlueprintCallable)
 		void SwitchState(UFightPawnState* DestinationState);
-
-	UFUNCTION()
-		void SwitchToFinishState();
 
 public:
 	// Called every frame
@@ -102,6 +106,9 @@ public:
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
+
+	UFUNCTION(BlueprintCallable)
+		UCharacterStatsComponent* GetCharacterStatsComponent();
 
 	UFUNCTION(BlueprintCallable)
 		UFGPhysicsComponent* GetPhysicsComponent();
@@ -115,6 +122,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		UEventStateChangeComponent* GetEventStateChangeComponent();
 };
+
+FORCEINLINE UCharacterStatsComponent* AFightPawn::GetCharacterStatsComponent()
+{
+	return Stats;
+}
 
 FORCEINLINE UFGPhysicsComponent* AFightPawn::GetPhysicsComponent()
 {

@@ -10,6 +10,19 @@
 /**
  *
  */
+
+USTRUCT()
+struct FIGHTANPROJECT_API FOnFinishState
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+		UFightPawnState* NextState;
+
+	UPROPERTY(EditAnywhere)
+		float Time;
+};
 UCLASS()
 class FIGHTANPROJECT_API UStateChangeComponent : public UDataAsset
 {
@@ -21,6 +34,6 @@ public:
 		TArray<UStateLink*> Links;
 
 	// State to go when this state has finished;
-	UPROPERTY(EditAnywhere, category = "Event State Changes")
-		UFightPawnState* OnFinishState;
+	UPROPERTY(EditAnywhere)
+		FOnFinishState OnFinishState;
 };

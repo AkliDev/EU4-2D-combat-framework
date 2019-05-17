@@ -10,13 +10,9 @@
 #include "StateMachine/Events/EventEnums.h"
 #include "FGPhysicsComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCOllisionUp, Events, event);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCOllisionDown, Events, event);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCOllisionBehind, Events, event);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCOllisionFront, Events, event);
+class AFightPawn;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnVelpcityFlipX, Events, event);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnVelpcityFlipZ, Events, event);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPhysicsEvent, Events, event);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIGHTANPROJECT_API UFGPhysicsComponent : public USceneComponent
@@ -28,6 +24,8 @@ public:
 	UFGPhysicsComponent();
 
 protected:
+
+	AFightPawn* OwningPawn;
 
 	UPROPERTY(VisibleAnywhere)
 		UPushBoxComponent* PushBox;
@@ -52,33 +50,30 @@ protected:
 	UFUNCTION()
 		void UpdateLocation();
 
-	UFUNCTION()
-		void AddGravity(float DeltaTime);
+	
+
+	void CheckVelocityFlip();
 
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void CheckVelocityFlip();
+	UFUNCTION()
+		void AddGravity(float DeltaTime);
+
 	void FireCollisionEvents(FVector OverLap);
 
+	void SetOwningPawn(AFightPawn* owningPawn);
 	void SetPushBox(UPushBoxComponent* pushBox);
 	void SetContainer(UCharacterContainer* container);
 
 	UFUNCTION(BlueprintCallable)
 		void SetVelocity(FVector velocityVector);
 
-	//CollisionEvents
-	FOnCOllisionUp OnCollisionUp;
-	FOnCOllisionDown OnCollisionDown;
-	FOnCOllisionBehind OnCollisionBehind;
-	FOnCOllisionFront OnCollisionFront;
+	UFUNCTION(BlueprintCallable)
+		void AddVelocity(FVector velocityVector);
 
-
-	//VelocityEvents
-	FOnVelpcityFlipX OnVelpcityFlipX;
-	FOnVelpcityFlipZ OnVelpcityFlipZ;
-	
+	FOnPhysicsEvent OnPhysicsEvent;
 
 	UPushBoxComponent* GetPushBox() const;
 	FVector GetVelocity() const;

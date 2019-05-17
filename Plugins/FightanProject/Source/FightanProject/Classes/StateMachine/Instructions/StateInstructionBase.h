@@ -30,6 +30,9 @@ public:
 		float Float;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
+		FVector2D Vector2D;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		FVector Vector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
@@ -48,7 +51,7 @@ class FIGHTANPROJECT_API UStateInstructionBase : public UObject
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "State Instruction")
-		 void Execute(AFightPawn* refObject, FInstructionParameter params);
+		void Execute(AFightPawn* refObject, FInstructionParameter params);
 };
 
 

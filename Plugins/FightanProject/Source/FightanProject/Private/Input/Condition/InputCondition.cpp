@@ -54,10 +54,26 @@ bool UInputCondition::CheckCurrentInput(const UBufferInputItem* currentInput)
 	if (currentInput == nullptr)
 		return false;
 
-	if (UInputUtility::ValidateInputDirections(currentInput, ValidCurrentHoldDirections) == false)
-		return false;
+	for (int i = 0; i < ValidDirections.Num(); i++)
+	{
+		if (UInputUtility::ValidateInputDirection(currentInput, ValidDirections[i].RequiredDirections) == true)
+		{
+			if (ValidDirections[i].ValidStates.Num() > 0)
+			{
+				if (UInputUtility::ValidateInputState(currentInput->DirectionAtom, ValidDirections[i].ValidStates) == true)
+				{
+					break;
+				}
+			}
+			else
+				break;
+		}
 
-	for (FButtonCondition button : RequiredCurrentButtons)
+		if (i >= ValidDirections.Num() - 1)
+			return false;
+	}
+
+	for (FButtonCondition button : RequiredButtons)
 	{
 		if (UInputUtility::ValidateInputState(currentInput->InputAtoms[(int)button.RequiredButton], button.ValidStates) == false)
 			return false;

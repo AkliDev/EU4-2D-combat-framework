@@ -16,7 +16,4 @@ class FIGHTANPROJECT_API UCharacterStatsComponent : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 		float Weight;	
-
-	UPROPERTY(EditAnywhere)
-		float FallSpeed;
 };

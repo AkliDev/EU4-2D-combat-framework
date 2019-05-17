@@ -33,6 +33,7 @@ AFightPawn::AFightPawn()
 	//Pass pointer to PhysicsComponent
 	PhysicsComponent->SetPushBox(PushBox);
 	PhysicsComponent->SetContainer(Container);
+	PhysicsComponent->SetOwningPawn(this);
 
 	//Create FlipbookComponent 
 	Flipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Skin"));
@@ -59,27 +60,10 @@ void AFightPawn::BeginPlay()
 	if (InputBufferComponent != nullptr)
 		InputBufferComponent->BufferItemAdd.AddDynamic(this, &AFightPawn::CheckStateLinks);
 
-	if (Flipbook != nullptr)
-	{
-		if (CurrentState != nullptr)
-			Flipbook->SetFlipbook(CurrentState->Animation);
-
-		Flipbook->OnFinishedPlaying.AddDynamic(this, &AFightPawn::SwitchToFinishState);
-	}
-
-	if (CurrentState->StateBehaviour != nullptr)
-		//execute states enter instructions
-		ExecuteInstructions(CurrentState->StateBehaviour->OnEnterInstructions);
-
+	//EventState subscriptions
 	if (PhysicsComponent != nullptr)
 	{
-		PhysicsComponent->OnCollisionUp.AddDynamic(this, &AFightPawn::CheckEventStates);
-		PhysicsComponent->OnCollisionDown.AddDynamic(this, &AFightPawn::CheckEventStates);
-		PhysicsComponent->OnCollisionBehind.AddDynamic(this, &AFightPawn::CheckEventStates);
-		PhysicsComponent->OnCollisionFront.AddDynamic(this, &AFightPawn::CheckEventStates);
-
-		PhysicsComponent->OnVelpcityFlipX.AddDynamic(this, &AFightPawn::CheckEventStates);
-		PhysicsComponent->OnVelpcityFlipZ.AddDynamic(this, &AFightPawn::CheckEventStates);
+		PhysicsComponent->OnPhysicsEvent.AddDynamic(this, &AFightPawn::CheckEventStates);
 	}
 }
 
@@ -89,6 +73,7 @@ void AFightPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RetriveInstructionsFromInstructionTable();
+	CheckOnFinishState();
 	TimeInState += DeltaTime;
 }
 
@@ -154,13 +139,30 @@ void AFightPawn::CheckEventStates(Events event)
 	if (EventStateChangeComponent == nullptr)
 		return;
 
-	for (FEventState& state : EventStateChangeComponent->EventStates)
+	for (int i = 0; i < EventStateChangeComponent->EventStates.Num(); i++)
 	{
-		if (event == state.Event)
+		if (event == EventStateChangeComponent->EventStates[i].Event && EventStateChangeComponent->EventStates[i].EventState != nullptr)
 		{
-			SwitchState(state.EventState);
+			SwitchState(EventStateChangeComponent->EventStates[i].EventState);
+			CheckStateLinks(InputBufferComponent);
+			break;
 		}
 	}
+}
+
+void AFightPawn::CheckOnFinishState()
+{
+	if (CurrentState->StateChangeComponent == nullptr)
+		return;
+	if (CurrentState->StateChangeComponent->OnFinishState.NextState == nullptr)
+		return;
+
+	if (TimeInState >= CurrentState->StateChangeComponent->OnFinishState.Time)
+	{
+		SwitchState(CurrentState->StateChangeComponent->OnFinishState.NextState);
+		CheckStateLinks(InputBufferComponent);
+	}
+	
 }
 
 /// <summary>Switches the current state of the pawn with the given state</summary>
@@ -192,21 +194,6 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	//Reset state instruction counter
 	StateInstructionCounter = 0;
 
-	//Temporary
-	if (CurrentState->StateChangeComponent != nullptr && CurrentState->StateChangeComponent->OnFinishState != nullptr)
-		Flipbook->SetLooping(false);
-	else
-		Flipbook->SetLooping(true);
-
+	Flipbook->SetLooping(CurrentState->bLoops);
 	Flipbook->Play();
-}
-
-/// <summary>When called switched pawns state to the current state's on finish state</summary> 
-void AFightPawn::SwitchToFinishState()
-{
-	if (CurrentState->StateChangeComponent != nullptr && CurrentState->StateChangeComponent->OnFinishState != nullptr)
-	{
-		SwitchState(CurrentState->StateChangeComponent->OnFinishState);
-		CheckStateLinks(InputBufferComponent);
-	}
 }

@@ -4,8 +4,9 @@
 #include "StateMachine/EventStateChangeComponent.h"
 
 
-FEventState::FEventState() {}
-FEventState::FEventState(UFightPawnState* eventState, Events event, FVector window)
+FEventState::FEventState()
+: EventState(nullptr), Event(Events::ON_COLLISION_BEHIND), Window(FVector2D::ZeroVector) {}
+FEventState::FEventState(UFightPawnState* eventState, Events event, FVector2D window)
 	: EventState(eventState),  Event(event), Window(window){}
 
 // Sets default values for this component's properties
@@ -22,7 +23,7 @@ void UEventStateChangeComponent::ClearAll()
 	EventStates.Empty();
 }
 
-void UEventStateChangeComponent::AddEventState(UFightPawnState* eventState, Events event, FVector window)
+void UEventStateChangeComponent::AddEventState(UFightPawnState* eventState, Events event, FVector2D window)
 {
 	EventStates.Add(FEventState(eventState, event, window));
 }

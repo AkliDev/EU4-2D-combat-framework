@@ -13,7 +13,6 @@ UEnviormentCollisionBox::UEnviormentCollisionBox()
 void UEnviormentCollisionBox::BeginPlay()
 {
 	Super::BeginPlay();
-
 	 
 	if (AFightanProjectGameModeBase* gameMode = Cast<AFightanProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
 	{

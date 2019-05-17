@@ -16,7 +16,7 @@ struct FIGHTANPROJECT_API FEventState
 
 public:
 	FEventState();
-	FEventState(UFightPawnState* eventState, Events event, FVector window);
+	FEventState(UFightPawnState* eventState, Events event, FVector2D window);
 
 	UPROPERTY(EditAnywhere)
 		UFightPawnState* EventState;
@@ -25,7 +25,7 @@ public:
 		Events Event;
 
 	UPROPERTY(EditAnywhere)
-		FVector Window;
+		FVector2D Window;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -48,5 +48,5 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "EventState")
-		void AddEventState(UFightPawnState* eventState, Events event, FVector window);
+		void AddEventState(UFightPawnState* eventState, Events event, FVector2D window);
 };
