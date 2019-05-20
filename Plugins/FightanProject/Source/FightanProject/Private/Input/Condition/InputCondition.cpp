@@ -64,7 +64,7 @@ bool UInputCondition::CheckCurrentInput(const UBufferInputItem* currentInput)
 				{
 					break;
 				}
-			}
+			}		
 			else
 				break;
 		}

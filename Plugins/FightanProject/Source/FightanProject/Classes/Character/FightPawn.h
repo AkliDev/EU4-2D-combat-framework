@@ -106,6 +106,8 @@ public:
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
+	UFUNCTION(BlueprintCallable)
+		float GetStateTimer();
 
 	UFUNCTION(BlueprintCallable)
 		UCharacterStatsComponent* GetCharacterStatsComponent();
@@ -122,6 +124,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 		UEventStateChangeComponent* GetEventStateChangeComponent();
 };
+
+
+FORCEINLINE float AFightPawn::GetStateTimer()
+{
+	return TimeInState;
+}
 
 FORCEINLINE UCharacterStatsComponent* AFightPawn::GetCharacterStatsComponent()
 {

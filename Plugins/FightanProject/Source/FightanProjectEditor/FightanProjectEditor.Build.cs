@@ -42,14 +42,19 @@ public class FightanProjectEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+                "ContentBrowser",
+                "Core",
                 "CoreUObject",
+                "DesktopWidgets",
+                "EditorStyle",
                 "Engine",
+                "InputCore",
+                "Projects",
                 "Slate",
                 "SlateCore",
-                "InputCore",
+                "FightanProject",
                 "UnrealEd",
-                "LevelEditor",
-                "Projects"
+                "LevelEditor"
 				// ... add private dependencies that you statically link with here ...	
 			}
             );
@@ -58,7 +63,11 @@ public class FightanProjectEditor : ModuleRules
         DynamicallyLoadedModuleNames.AddRange(
             new string[]
             {
-				// ... add any modules that your module loads dynamically here ...
+				
+                "AssetTools",
+                "MainFrame",
+//				"WorkspaceMenuStructure",
+// ... add any modules that your module loads dynamically here ...
 			}
             );
     }

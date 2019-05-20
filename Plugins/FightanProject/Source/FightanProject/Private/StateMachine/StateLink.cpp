@@ -9,6 +9,15 @@ FStateMachineResult UStateLink::TryLink(AFightPawn* refObject, const UInputBuffe
 {
 	FStateMachineResult result;
 
+	for (int i = 0; i < CancelWindows.Num(); i++)
+	{
+		if (refObject->GetStateTimer() > CancelWindows[i].X && refObject->GetStateTimer() < CancelWindows[i].Y)		
+			break;
+	
+		if (i >= CancelWindows.Num() - 1)
+			return result;
+	}
+
 	if (InputCondition != nullptr)
 	{
 		result.InputValidationResult = InputCondition->ValidateInput(refObject, InputBuffer);
