@@ -5,6 +5,7 @@
 #include "StateMachine/EventStateChangeComponent.h"
 #include "StateMachine/StateMachineResults.h"
 #include "StateMachine/Instructions/StateInstructionBase.h"
+#include "GameData/Box/BoxInstruction.h"
 #include "Engine/DataTable.h"
 
 
@@ -22,10 +23,14 @@ AFightPawn::AFightPawn()
 	//Create Physics component for the pawn
 	PhysicsComponent = CreateDefaultSubobject<UFGPhysicsComponent>(TEXT("PhysicsComponent"));
 	RootComponent = PhysicsComponent;
-	
+
 	//Create PushBox
 	PushBox = CreateDefaultSubobject<UPushBoxComponent>(TEXT("PushBox"));
 	PushBox->SetupAttachment(RootComponent);
+
+	BoxDataHandler = CreateDefaultSubobject<UBoxDataHandlerComponent>(TEXT("BoxHitHurt"));
+	BoxDataHandler->SetupAttachment(PushBox);
+	BoxDataHandler->SetOwningPawn(this);
 
 	Container = CreateDefaultSubobject<UCharacterContainer>(TEXT("Container"));
 	Container->SetupAttachment(RootComponent);
@@ -72,12 +77,13 @@ void AFightPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	RetriveInstructionsFromInstructionTable();
+	ExecuteTickInstructions();
 	CheckOnFinishState();
 	TimeInState += DeltaTime;
 }
 
-void AFightPawn::RetriveInstructionsFromInstructionTable()
+
+void AFightPawn::ExecuteTickInstructions()
 {
 	if (CurrentState != nullptr &&  CurrentState->StateBehaviour != nullptr)
 	{
@@ -85,7 +91,7 @@ void AFightPawn::RetriveInstructionsFromInstructionTable()
 
 		if (CurrentState->StateBehaviour->TickInstructionTables != nullptr)
 		{
-			static const FString ContextString(TEXT("State Instruction Context Not Found"));
+			static const FString ContextString(TEXT("Instruction Context Not Found"));
 			FString IndexString = FString::FromInt(StateInstructionCounter);
 			FName IndexName = FName(*IndexString);
 			FInstructionRow* instructionRow = CurrentState->StateBehaviour->TickInstructionTables->FindRow<FInstructionRow>(IndexName, ContextString, false);
@@ -94,17 +100,44 @@ void AFightPawn::RetriveInstructionsFromInstructionTable()
 			{
 				if (TimeInState >= instructionRow->Time)
 				{
-					for (int i = 0; i < instructionRow->Instructions.Num(); i++)
-					{
-						if (instructionRow->Instructions[i].Instruction != nullptr)
-						{
-							instructionRow->Instructions[i].Instruction->GetDefaultObject<UStateInstructionBase>()->Execute(this, instructionRow->Instructions[i].Params);
-
-						}
-					}
+					ExecuteInstructions(instructionRow->Instructions);
 					StateInstructionCounter++;
 				}
+			}		
+		}
+
+		if (CurrentState->StateBehaviour->BoxInstructionTables != nullptr)
+		{
+			static const FString ContextString(TEXT("Instruction Context Not Found"));
+			FString IndexString = FString::FromInt(BoxInstructionCounter);
+			FName IndexName = FName(*IndexString);
+			FBoxInstructionRow* BoxInstructionRow = CurrentState->StateBehaviour->BoxInstructionTables->FindRow<FBoxInstructionRow>(IndexName, ContextString, false);
+
+			if (BoxInstructionRow)
+			{
+				if (TimeInState >= BoxInstructionRow->Time)
+				{
+					for (FBoxData& box : BoxInstructionRow->FrameBoxes)
+					{
+
+						switch (box.Type)
+						{
+						case BoxType::HIT_BOX:
+
+							BoxDataHandler->ActivateHitBox(box.Params);
+							break;
+
+						case BoxType::HURT_BOX:
+
+							BoxDataHandler->ActivateHurtBox(box.Params);
+							break;
+						}
+						
+					}
+					BoxInstructionCounter++;
+				}				
 			}
+			
 		}
 	}
 }
@@ -162,7 +195,7 @@ void AFightPawn::CheckOnFinishState()
 		SwitchState(CurrentState->StateChangeComponent->OnFinishState.NextState);
 		CheckStateLinks(InputBufferComponent);
 	}
-	
+
 }
 
 /// <summary>Switches the current state of the pawn with the given state</summary>
@@ -175,15 +208,15 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	EventStateChangeComponent->ClearAll();
 
 	//execute states exit instructions
-	if(CurrentState->StateBehaviour != nullptr)
-	ExecuteInstructions(CurrentState->StateBehaviour->OnExitInstructions);
+	if (CurrentState->StateBehaviour != nullptr)
+		ExecuteInstructions(CurrentState->StateBehaviour->OnExitInstructions);
 
 	//switch to destination state
 	CurrentState = DestinationState;
 
 	if (CurrentState->StateBehaviour != nullptr)
-	//execute states enter instructions
-	ExecuteInstructions(CurrentState->StateBehaviour->OnEnterInstructions);
+		//execute states enter instructions
+		ExecuteInstructions(CurrentState->StateBehaviour->OnEnterInstructions);
 
 	//Update animation
 	Flipbook->SetFlipbook(CurrentState->Animation);
@@ -194,6 +227,16 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	//Reset state instruction counter
 	StateInstructionCounter = 0;
 
+	//Reset box instruction counter
+	BoxInstructionCounter = 0;
+
+	BoxDataHandler->DeactivateAllActiveBoxes();
+
 	Flipbook->SetLooping(CurrentState->bLoops);
 	Flipbook->Play();
+}
+
+void AFightPawn::AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape)
+{
+	Subject->AttachToComponent(DuctTape, FAttachmentTransformRules::KeepRelativeTransform);
 }

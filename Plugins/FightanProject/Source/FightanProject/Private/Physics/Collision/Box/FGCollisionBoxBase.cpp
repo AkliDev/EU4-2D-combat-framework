@@ -7,6 +7,8 @@
 UFGCollisionBoxBase::UFGCollisionBoxBase()
 {
 	BoxExtent.Y = 0;
+	LineThickness = 5;
+	bHiddenInGame = false;
 }
 
 UCastBox::UCastBox() {}

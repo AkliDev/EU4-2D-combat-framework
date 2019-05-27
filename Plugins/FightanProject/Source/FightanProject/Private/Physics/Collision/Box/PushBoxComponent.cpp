@@ -7,6 +7,8 @@ UPushBoxComponent::UPushBoxComponent()
 {
 	Type = PhysicsType::DYNAMIC;
 	bWantsOnUpdateTransform = true;
+
+	ShapeColor = FColor::Green;
 }
 
 //void UPushBoxComponent::SetBoxExtent(FVector InBoxExtent, bool bUpdateOverlaps)

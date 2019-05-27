@@ -29,4 +29,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		UDataTable* TickInstructionTables;
 
+	UPROPERTY(EditAnywhere)
+		UDataTable* BoxInstructionTables;
+
 };

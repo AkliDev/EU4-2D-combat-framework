@@ -17,7 +17,9 @@
 #include "StateMachine/Instructions/StateInstructionBase.h"
 #include "StateMachine/Events/EventEnums.h"
 #include "CharacterStatsComponent.h"
+#include "BoxDataHandlerComponent.h"
 #include "FightPawn.generated.h"
+
 
 //Forward declaration to prevent circular dependency 
 struct FStateMachineResult;
@@ -45,9 +47,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 		float TimeInState;
 
-	//Counter that keeps track of the instruction we need to check for execution
+	//Counter that keeps track of the behavior instruction we need to check for execution
 	UPROPERTY(EditAnywhere)
 		int StateInstructionCounter;
+
+	//Counter that keeps track of the box instruction we need to check for execution
+	UPROPERTY(EditAnywhere)
+		int BoxInstructionCounter;
 
 	//Pawns physics component
 	UPROPERTY(VisibleAnywhere)
@@ -56,6 +62,9 @@ protected:
 	//Panws pushbox
 	UPROPERTY(VisibleAnywhere)
 		UPushBoxComponent* PushBox;
+
+	UPROPERTY(VisibleAnywhere)
+		UBoxDataHandlerComponent* BoxDataHandler;
 
 	//Component that will contain everything but the pushbox
 	UPROPERTY(VisibleAnywhere)
@@ -76,11 +85,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		UAudioComponent* AudioComponent;
 
-	UPROPERTY(VisibleAnywhere)
-		UCharacterStatsComponent* StatsComponent;
-
 	UFUNCTION()
-		void RetriveInstructionsFromInstructionTable();
+		void ExecuteTickInstructions();
 
 	UFUNCTION()
 		void ExecuteInstructions(TArray<FInstruction>& instructions);
@@ -103,6 +109,9 @@ public:
 
 	// Called to bind functionality to input
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+	void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
@@ -148,7 +157,7 @@ FORCEINLINE UAudioComponent* AFightPawn::GetAudioComponent()
 
 FORCEINLINE UCharacterStatsComponent* AFightPawn::GetStatsComponent()
 {
-	return StatsComponent;
+	return Stats;
 }
 
 FORCEINLINE UEventStateChangeComponent* AFightPawn::GetEventStateChangeComponent()

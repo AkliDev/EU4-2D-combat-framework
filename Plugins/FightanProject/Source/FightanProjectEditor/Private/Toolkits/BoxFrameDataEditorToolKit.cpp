@@ -6,7 +6,6 @@
 #include "Editor.h"
 #include "EditorReimportHandler.h"
 #include "EditorStyleSet.h"
-#include "Editor/UnrealEd/Public/SEditorViewport.h"
 #include "GameData/Box/BoxFrameData.h"
 #include "UObject/NameTypes.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -21,6 +20,7 @@ namespace BoxFrameDataEditor
 {
 	static const FName AppIdentifier("BoxFrameDataEditorApp");
 	static const FName TabId("BoxFrameDataEditor");
+	static const FName TabI3("BoxFrameDataEditor");
 }
 
 /* FBoxFrameDataEditorToolKit structors
@@ -142,7 +142,7 @@ TSharedRef<SDockTab> FBoxFrameDataEditorToolKit::HandleTabManagerSpawnTab(const 
 
 	if (TabIdentifier == BoxFrameDataEditor::TabId)
 	{
-		TabWidget = SNew(SEditorViewport);
+		//TabWidget = SNew(SEditorViewport);
 	}
 
 	return SNew(SDockTab)

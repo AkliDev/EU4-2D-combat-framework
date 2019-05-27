@@ -55,17 +55,14 @@ protected:
 	void CheckVelocityFlip();
 
 public:
+
+	FOnPhysicsEvent OnPhysicsEvent;
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION()
 		void AddGravity(float DeltaTime);
-
-	void FireCollisionEvents(FVector OverLap);
-
-	void SetOwningPawn(AFightPawn* owningPawn);
-	void SetPushBox(UPushBoxComponent* pushBox);
-	void SetContainer(UCharacterContainer* container);
 
 	UFUNCTION(BlueprintCallable)
 		void SetVelocity(FVector velocityVector);
@@ -73,10 +70,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddVelocity(FVector velocityVector);
 
-	FOnPhysicsEvent OnPhysicsEvent;
+	void FireCollisionEvents(FVector OverLap);
 
 	UPushBoxComponent* GetPushBox() const;
 	FVector GetVelocity() const;
+
+	void SetOwningPawn(AFightPawn* owningPawn);
+	void SetPushBox(UPushBoxComponent* pushBox);
+	void SetContainer(UCharacterContainer* container);
 };
 
 FORCEINLINE UPushBoxComponent* UFGPhysicsComponent::GetPushBox() const

@@ -16,7 +16,6 @@ enum class PhysicsType : int8
 	TRIGGER
 };
 
-
 UCLASS()
 class FIGHTANPROJECT_API UFGCollisionBoxBase : public UBoxComponent
 {
