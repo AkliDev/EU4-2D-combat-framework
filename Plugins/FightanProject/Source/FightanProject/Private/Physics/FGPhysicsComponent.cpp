@@ -39,8 +39,14 @@ void UFGPhysicsComponent::SetPushBoxZOffsetOnChange()
 	if (PushBox == nullptr)
 		return;
 
-	if (PushBox->GetScaledBoxExtent().Z != PreviousPushBoxZExtend && PushBox != nullptr && Container != nullptr)
-		PushBox->SetRelativeLocation(Container->GetRelativeTransform().GetLocation() + FVector(0, 0, PushBox->GetScaledBoxExtent().Z));
+	if (PushBox != nullptr && Container != nullptr)
+	{
+		if (PushBox->GetScaledBoxExtent().Z >= PreviousPushBoxZExtend)
+			PushBox->SetRelativeLocation(Container->GetRelativeTransform().GetLocation() + FVector(0, 0, PushBox->GetScaledBoxExtent().Z));
+		else if(PushBox->GetScaledBoxExtent().Z <= PreviousPushBoxZExtend)
+			PushBox->SetRelativeLocation(PushBox->GetRelativeTransform().GetLocation() - FVector(0, 0, PreviousPushBoxZExtend - PushBox->GetScaledBoxExtent().Z));
+	}
+	
 
 	PreviousPushBoxZExtend = PushBox->GetScaledBoxExtent().Z;
 }

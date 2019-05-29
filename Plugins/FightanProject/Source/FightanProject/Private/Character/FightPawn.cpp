@@ -7,6 +7,7 @@
 #include "StateMachine/Instructions/StateInstructionBase.h"
 #include "GameData/Box/BoxInstruction.h"
 #include "Engine/DataTable.h"
+#include "Game/FightanProjectGameModeBase.h"
 
 
 // Sets default values
@@ -28,12 +29,12 @@ AFightPawn::AFightPawn()
 	PushBox = CreateDefaultSubobject<UPushBoxComponent>(TEXT("PushBox"));
 	PushBox->SetupAttachment(RootComponent);
 
-	BoxDataHandler = CreateDefaultSubobject<UBoxDataHandlerComponent>(TEXT("BoxHitHurt"));
-	BoxDataHandler->SetupAttachment(PushBox);
-	BoxDataHandler->SetOwningPawn(this);
-
 	Container = CreateDefaultSubobject<UCharacterContainer>(TEXT("Container"));
 	Container->SetupAttachment(RootComponent);
+
+	BoxDataHandler = CreateDefaultSubobject<UBoxDataHandlerComponent>(TEXT("BoxHitHurt"));
+	BoxDataHandler->SetupAttachment(Container);
+	BoxDataHandler->SetOwningPawn(this);
 
 	//Pass pointer to PhysicsComponent
 	PhysicsComponent->SetPushBox(PushBox);
@@ -70,6 +71,11 @@ void AFightPawn::BeginPlay()
 	{
 		PhysicsComponent->OnPhysicsEvent.AddDynamic(this, &AFightPawn::CheckEventStates);
 	}
+
+	if (AFightanProjectGameModeBase* gameMode = Cast<AFightanProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		gameMode->GetHitManager()->RegisterPawn(this);
+	}
 }
 
 // Called every frame
@@ -77,11 +83,23 @@ void AFightPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ExecuteTickInstructions();
 	CheckOnFinishState();
+	ExecuteTickInstructions();
 	TimeInState += DeltaTime;
 }
 
+
+void AFightPawn::BroadCastOnIsHit()
+{
+	OnIsHit.Broadcast();
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HURT!!!"));
+}
+
+void AFightPawn::BroadCastOnHasHit()
+{
+	OnHasHit.Broadcast();
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HIT!!!"));
+}
 
 void AFightPawn::ExecuteTickInstructions()
 {

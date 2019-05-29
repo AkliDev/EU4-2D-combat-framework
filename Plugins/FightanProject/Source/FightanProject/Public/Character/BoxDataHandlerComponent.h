@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "Physics/Collision/Box/TraceBox.h"
 #include "Physics/Collision/Box/HitBox.h"
 #include "Physics/Collision/Box/HurtBox.h"
 #include "BoxDataHandlerComponent.generated.h"
 
+class UHitManager;
 class AFightPawn;
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIGHTANPROJECT_API UBoxDataHandlerComponent : public USceneComponent
@@ -21,6 +21,7 @@ public:
 
 protected:
 	friend class AFightPawn;
+	friend class UHitManager;
 
 	AFightPawn* OwningPawns;
 
@@ -32,7 +33,10 @@ protected:
 		TArray<UTraceBox*> BoxPool;
 
 	UPROPERTY(EditAnywhere)
-		TArray<UTraceBox*> ActiveBoxes;
+		TArray<UHitBox*> ActiveHitBoxes;
+
+	UPROPERTY(EditAnywhere)
+		TArray<UHurtBox*> ActiveHurtBoxes;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;

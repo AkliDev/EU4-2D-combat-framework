@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Physics/PhysicsWorld.h"
+#include "GameData/Box/HitManager.h"
 #include "UMG/Public/Blueprint/UserWidget.h"
 #include "FightanProjectGameModeBase.generated.h"
 
@@ -25,6 +26,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		UPhysicsWorld* PhysicsWorld;
 
+	UPROPERTY(VisibleAnywhere)
+		UHitManager* HitManager;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG Game")
 		TSubclassOf<UUserWidget> StartingWidgetClass;
 
@@ -36,10 +40,18 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Components|Physics")
-	UPhysicsWorld* GetPhysicsWorld() const;
+		UPhysicsWorld* GetPhysicsWorld() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Components|Hit Management")
+		UHitManager* GetHitManager() const;
 };
 
 FORCEINLINE UPhysicsWorld* AFightanProjectGameModeBase::GetPhysicsWorld() const
 {
 	return PhysicsWorld;
+}
+
+FORCEINLINE UHitManager* AFightanProjectGameModeBase::GetHitManager() const
+{
+	return HitManager;
 }

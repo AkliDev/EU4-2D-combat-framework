@@ -25,6 +25,9 @@
 struct FStateMachineResult;
 class UFightPawnState;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIsHit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHasHit);
+
 UCLASS()
 class FIGHTANPROJECT_API AFightPawn : public APawn
 {
@@ -37,6 +40,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
 
 	UPROPERTY(EditAnywhere)
 		UCharacterStatsComponent* Stats;
@@ -103,6 +107,11 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		void SwitchState(UFightPawnState* DestinationState);
 
+	FOnIsHit OnIsHit;
+	FOnHasHit OnHasHit;
+	
+
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -111,56 +120,71 @@ public:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
+		void BroadCastOnIsHit();
+
+	UFUNCTION()
+		void BroadCastOnHasHit();
+
+	UFUNCTION()
 	void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
-	UFUNCTION(BlueprintCallable)
-		float GetStateTimer();
 
 	UFUNCTION(BlueprintCallable)
-		UCharacterStatsComponent* GetCharacterStatsComponent();
+		float GetStateTimer() const;
 
 	UFUNCTION(BlueprintCallable)
-		UFGPhysicsComponent* GetPhysicsComponent();
+		UCharacterStatsComponent* GetCharacterStatsComponent() const;
 
 	UFUNCTION(BlueprintCallable)
-		UAudioComponent* GetAudioComponent();
+		UFGPhysicsComponent* GetPhysicsComponent() const;
 
 	UFUNCTION(BlueprintCallable)
-		UCharacterStatsComponent* GetStatsComponent();
+		UAudioComponent* GetAudioComponent() const;
 
 	UFUNCTION(BlueprintCallable)
-		UEventStateChangeComponent* GetEventStateChangeComponent();
+		UCharacterStatsComponent* GetStatsComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UEventStateChangeComponent* GetEventStateChangeComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UBoxDataHandlerComponent* GetBoxDataHandlerComponent() const;
 };
 
 
-FORCEINLINE float AFightPawn::GetStateTimer()
+FORCEINLINE float AFightPawn::GetStateTimer() const
 {
 	return TimeInState;
 }
 
-FORCEINLINE UCharacterStatsComponent* AFightPawn::GetCharacterStatsComponent()
+FORCEINLINE UCharacterStatsComponent* AFightPawn::GetCharacterStatsComponent() const
 {
 	return Stats;
 }
 
-FORCEINLINE UFGPhysicsComponent* AFightPawn::GetPhysicsComponent()
+FORCEINLINE UFGPhysicsComponent* AFightPawn::GetPhysicsComponent() const
 {
 	return PhysicsComponent;
 }
 
-FORCEINLINE UAudioComponent* AFightPawn::GetAudioComponent()
+FORCEINLINE UAudioComponent* AFightPawn::GetAudioComponent() const
 {
 	return AudioComponent;
 }
 
-FORCEINLINE UCharacterStatsComponent* AFightPawn::GetStatsComponent()
+FORCEINLINE UCharacterStatsComponent* AFightPawn::GetStatsComponent() const
 {
 	return Stats;
 }
 
-FORCEINLINE UEventStateChangeComponent* AFightPawn::GetEventStateChangeComponent()
+FORCEINLINE UEventStateChangeComponent* AFightPawn::GetEventStateChangeComponent() const
 {
 	return EventStateChangeComponent;
+}
+
+FORCEINLINE UBoxDataHandlerComponent* AFightPawn::GetBoxDataHandlerComponent() const
+{
+	return BoxDataHandler;
 }

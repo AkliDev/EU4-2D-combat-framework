@@ -11,7 +11,6 @@
  *
  */
 
-
 UCLASS()
 class FIGHTANPROJECT_API UTraceBox : public UFGCollisionBoxBase
 {
@@ -23,10 +22,13 @@ public:
 protected:
 
 	friend class UBoxDataHandlerComponent;
-	float LifeTime;
-	int32 bInUse : 1;
 
-	void Deactivate();
+	UPROPERTY(EditAnywhere)
+		float LifeTime;
+
+		int32 bInUse : 1;
+
+	virtual void Deactivate();
 
 public:
 

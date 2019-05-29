@@ -7,3 +7,9 @@ UHitBox::UHitBox()
 {
 	ShapeColor = FColor::Red;
 }
+
+void UHitBox::Deactivate()
+{
+	Super::Deactivate();
+	HitPawns.Empty();
+} 

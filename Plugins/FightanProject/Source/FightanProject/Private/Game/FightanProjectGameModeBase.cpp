@@ -5,6 +5,7 @@
 AFightanProjectGameModeBase::AFightanProjectGameModeBase()
 {
 	PhysicsWorld = CreateDefaultSubobject<UPhysicsWorld>(TEXT("PhysicsWorld"));
+	HitManager = CreateDefaultSubobject<UHitManager>(TEXT("HitManager"));
 }
 
 void AFightanProjectGameModeBase::BeginPlay()

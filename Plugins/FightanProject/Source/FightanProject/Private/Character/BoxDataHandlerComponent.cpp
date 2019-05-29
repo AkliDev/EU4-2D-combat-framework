@@ -40,22 +40,39 @@ void UBoxDataHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	// ...
 
-	TArray<UTraceBox*> deadBoxes;
+	TArray<UHitBox*> deadHitBoxes;
+	TArray<UHurtBox*> deadHurtBoxes;
 
-	for (UTraceBox* box : ActiveBoxes)
+	for (UHitBox* box : ActiveHitBoxes)
 	{
 		box->LifeTime -= DeltaTime;
 
 		if (box->LifeTime <= 0)
 		{
 			box->Deactivate();
-			deadBoxes.Add(box);
+			deadHitBoxes.Add(box);
 		}
 	}
 
-	for (UTraceBox* deadBox : deadBoxes)
+	for (UHurtBox* box : ActiveHurtBoxes)
 	{
-		ActiveBoxes.Remove(deadBox);
+		box->LifeTime -= DeltaTime;
+
+		if (box->LifeTime <= 0)
+		{
+			box->Deactivate();
+			deadHurtBoxes.Add(box);
+		}
+	}
+
+	for (UHitBox* deadBox : deadHitBoxes)
+	{
+		ActiveHitBoxes.Remove(deadBox);
+	}
+
+	for (UHurtBox* deadBox : deadHurtBoxes)
+	{
+		ActiveHurtBoxes.Remove(deadBox);
 	}
 }
 
@@ -66,8 +83,8 @@ UHitBox* UBoxDataHandlerComponent::ActivateHitBox(FBoxParams& params)
 	{
 		if (box->IsA(UHitBox::StaticClass()) && box->bInUse == false)
 		{
-			box->Init(params);
-			ActiveBoxes.Add(box);
+			box->Init(params);;
+			ActiveHitBoxes.Add(Cast<UHitBox>(box));
 			return Cast<UHitBox>(box);
 		}
 	}
@@ -90,7 +107,7 @@ UHurtBox* UBoxDataHandlerComponent::ActivateHurtBox(FBoxParams& params)
 		if (box->IsA(UHurtBox::StaticClass()) && box->bInUse == false)
 		{
 			box->Init(params);
-			ActiveBoxes.Add(box);
+			ActiveHurtBoxes.Add(Cast<UHurtBox>(box));
 			return Cast<UHurtBox>(box);
 		}
 	}
@@ -131,11 +148,18 @@ UHurtBox* UBoxDataHandlerComponent::CreateHurtBox()
 
 void UBoxDataHandlerComponent::DeactivateAllActiveBoxes()
 {
-	for (UTraceBox* box : ActiveBoxes)
+	for (UHitBox* box : ActiveHitBoxes)
 	{
 		box->Deactivate();		
 	}
-	ActiveBoxes.Empty();
+
+	for (UHurtBox* box : ActiveHurtBoxes)
+	{
+		box->Deactivate();
+	}
+
+	ActiveHitBoxes.Empty();
+	ActiveHurtBoxes.Empty();
 }
 
 void UBoxDataHandlerComponent::SetOwningPawn(AFightPawn* owningPawn)
