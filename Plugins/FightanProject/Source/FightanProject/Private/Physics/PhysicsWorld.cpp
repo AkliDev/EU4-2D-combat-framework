@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Physics/PhysicsWorld.h"
+#include "Character/FightPawn.h"
 
 // Sets default values for this component's properties
 UPhysicsWorld::UPhysicsWorld()
@@ -31,14 +32,9 @@ void UPhysicsWorld::TranslatePushBoxes(float deltaTime)
 	{
 		if (PhysicsEntities[i] != nullptr)
 			if (PhysicsEntities[i]->GetPushBox() != nullptr)
-			{
-				if (!PhysicsEntities[i]->GetVelocity().IsZero())
-				{
-					didSomethingCollide |= CheckPushPhysicsForBoxes(CurrentStateOfBoxes[i], PhysicsEntities[i]->GetVelocity() * deltaTime, PhysicsEntities[i]);
-				}
-
-				//didSomethingCollide |= CheckPushPhysicsForBoxes(CurrentStateOfBoxes[i], PhysicsEntities[i]->GetVelocity() * deltaTime, PhysicsEntities[i]);
-			}
+				if (PhysicsEntities[i]->OwningPawn->GetHitStopTime() <= 0)
+					if (!PhysicsEntities[i]->GetVelocity().IsZero())
+						didSomethingCollide |= CheckPushPhysicsForBoxes(CurrentStateOfBoxes[i], PhysicsEntities[i]->GetVelocity() * deltaTime, PhysicsEntities[i]);
 	}
 
 	int safetyCounter = 0;
@@ -198,7 +194,8 @@ void UPhysicsWorld::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 	for (UFGPhysicsComponent* entity : PhysicsEntities)
 	{
-		entity->AddGravity(DeltaTime);
+		if (entity->OwningPawn->GetHitStopTime() <= 0)
+			entity->AddGravity(DeltaTime);
 	}
 
 	TranslatePushBoxes(DeltaTime);

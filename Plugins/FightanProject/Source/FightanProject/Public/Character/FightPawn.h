@@ -25,8 +25,9 @@
 struct FStateMachineResult;
 class UFightPawnState;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIsHit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHasHit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIsHit, FHitBoxParams&, HitParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHasHit, FHitBoxParams&, HitParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHitStopEnd);
 
 UCLASS()
 class FIGHTANPROJECT_API AFightPawn : public APawn
@@ -40,24 +41,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 
 	UPROPERTY(EditAnywhere)
 		UCharacterStatsComponent* Stats;
 
 	UPROPERTY(EditAnywhere)
 		UFightPawnState* CurrentState;
-
-	UPROPERTY(EditAnywhere)
-		float TimeInState;
-
-	//Counter that keeps track of the behavior instruction we need to check for execution
-	UPROPERTY(EditAnywhere)
-		int StateInstructionCounter;
-
-	//Counter that keeps track of the box instruction we need to check for execution
-	UPROPERTY(EditAnywhere)
-		int BoxInstructionCounter;
 
 	//Pawns physics component
 	UPROPERTY(VisibleAnywhere)
@@ -89,6 +78,22 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		UAudioComponent* AudioComponent;
 
+	UPROPERTY(EditAnywhere)
+		float TimeInState;
+
+	//Counter that keeps track of the behavior instruction we need to check for execution
+	UPROPERTY(EditAnywhere)
+		int StateInstructionCounter;
+
+	//Counter that keeps track of the box instruction we need to check for execution
+	UPROPERTY(EditAnywhere)
+		int BoxInstructionCounter;
+
+	UPROPERTY(EditAnywhere)
+		float HitStopTimer;
+	UPROPERTY(EditAnywhere)
+		float PreviousHitStopTime;
+
 	UFUNCTION()
 		void ExecuteTickInstructions();
 
@@ -109,8 +114,14 @@ protected:
 
 	FOnIsHit OnIsHit;
 	FOnHasHit OnHasHit;
-	
 
+	FOnHitStopEnd OnHitStopEnd;
+
+	UFUNCTION()
+		void SetHitStop(float time);
+
+	UFUNCTION()
+		void DecreaseHitStopTimer(float deltaTime);
 
 public:
 	// Called every frame
@@ -120,13 +131,13 @@ public:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-		void BroadCastOnIsHit();
+		void BroadCastOnIsHit(FHitBoxParams& HitParams);
 
 	UFUNCTION()
-		void BroadCastOnHasHit();
+		void BroadCastOnHasHit(FHitBoxParams& HitParams);
 
 	UFUNCTION()
-	void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
+		void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
@@ -151,6 +162,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		UBoxDataHandlerComponent* GetBoxDataHandlerComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		float GetHitStopTime() const;
 };
 
 
@@ -187,4 +201,9 @@ FORCEINLINE UEventStateChangeComponent* AFightPawn::GetEventStateChangeComponent
 FORCEINLINE UBoxDataHandlerComponent* AFightPawn::GetBoxDataHandlerComponent() const
 {
 	return BoxDataHandler;
+}
+
+FORCEINLINE float AFightPawn::GetHitStopTime() const
+{
+	return HitStopTimer;
 }

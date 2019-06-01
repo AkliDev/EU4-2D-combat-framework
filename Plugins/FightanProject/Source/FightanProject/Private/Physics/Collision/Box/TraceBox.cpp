@@ -19,6 +19,8 @@ void UTraceBox::Init(FBoxParams& params)
 	SetHiddenInGame(false);
 }
 
+void UTraceBox::Init(FBoxParams& params, FHitBoxParams& hitParams){}
+
 void UTraceBox::Deactivate()
 {
 	bInUse = false;

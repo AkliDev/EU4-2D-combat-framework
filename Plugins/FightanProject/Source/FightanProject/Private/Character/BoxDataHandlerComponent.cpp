@@ -34,12 +34,8 @@ void UBoxDataHandlerComponent::BeginPlay()
 }
 
 // Called every frame
-void UBoxDataHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UBoxDataHandlerComponent::UpdateComponent(float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-
 	TArray<UHitBox*> deadHitBoxes;
 	TArray<UHurtBox*> deadHurtBoxes;
 
@@ -76,14 +72,14 @@ void UBoxDataHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	}
 }
 
-UHitBox* UBoxDataHandlerComponent::ActivateHitBox(FBoxParams& params)
+UHitBox* UBoxDataHandlerComponent::ActivateHitBox(FBoxParams& params, FHitBoxParams& hitParams)
 {
 	//search in the pool for a hitbox that we can use. If one is found we call init on it and return it
 	for (UTraceBox* box : BoxPool)
 	{
 		if (box->IsA(UHitBox::StaticClass()) && box->bInUse == false)
 		{
-			box->Init(params);;
+			box->Init(params, hitParams);;
 			ActiveHitBoxes.Add(Cast<UHitBox>(box));
 			return Cast<UHitBox>(box);
 		}
@@ -96,7 +92,7 @@ UHitBox* UBoxDataHandlerComponent::ActivateHitBox(FBoxParams& params)
 	}
 
 	//After we increased the amount of boxes we search for one again and return it. 
-	return ActivateHitBox(params);
+	return ActivateHitBox(params, hitParams);
 }
 
 UHurtBox* UBoxDataHandlerComponent::ActivateHurtBox(FBoxParams& params)

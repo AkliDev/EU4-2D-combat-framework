@@ -76,6 +76,7 @@ void AFightPawn::BeginPlay()
 	{
 		gameMode->GetHitManager()->RegisterPawn(this);
 	}
+
 }
 
 // Called every frame
@@ -83,22 +84,39 @@ void AFightPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckOnFinishState();
-	ExecuteTickInstructions();
-	TimeInState += DeltaTime;
+	DecreaseHitStopTimer(DeltaTime);
+	if (PreviousHitStopTime > 0 && HitStopTimer <= 0)
+	{
+		Flipbook->Play();
+		OnHitStopEnd.Broadcast();
+	}
+
+	if (HitStopTimer <= 0)
+	{
+		TimeInState += DeltaTime;
+		CheckOnFinishState();
+		ExecuteTickInstructions();
+		BoxDataHandler->UpdateComponent(DeltaTime);
+	}
+
+
+	PreviousHitStopTime = HitStopTimer;
+
 }
 
 
-void AFightPawn::BroadCastOnIsHit()
+void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams)
 {
-	OnIsHit.Broadcast();
+	OnIsHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HURT!!!"));
+	SetHitStop(HitParams.HitStop.Y);
 }
 
-void AFightPawn::BroadCastOnHasHit()
+void AFightPawn::BroadCastOnHasHit(FHitBoxParams& HitParams)
 {
-	OnHasHit.Broadcast();
+	OnHasHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HIT!!!"));
+	SetHitStop(HitParams.HitStop.X);
 }
 
 void AFightPawn::ExecuteTickInstructions()
@@ -121,7 +139,7 @@ void AFightPawn::ExecuteTickInstructions()
 					ExecuteInstructions(instructionRow->Instructions);
 					StateInstructionCounter++;
 				}
-			}		
+			}
 		}
 
 		if (CurrentState->StateBehaviour->BoxInstructionTables != nullptr)
@@ -142,20 +160,20 @@ void AFightPawn::ExecuteTickInstructions()
 						{
 						case BoxType::HIT_BOX:
 
-							BoxDataHandler->ActivateHitBox(box.Params);
+							BoxDataHandler->ActivateHitBox(box.BoxParams, box.HitParams);
 							break;
 
 						case BoxType::HURT_BOX:
 
-							BoxDataHandler->ActivateHurtBox(box.Params);
+							BoxDataHandler->ActivateHurtBox(box.BoxParams);
 							break;
 						}
-						
+
 					}
 					BoxInstructionCounter++;
-				}				
+				}
 			}
-			
+
 		}
 	}
 }
@@ -252,6 +270,17 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 
 	Flipbook->SetLooping(CurrentState->bLoops);
 	Flipbook->Play();
+}
+
+void AFightPawn::SetHitStop(float Time)
+{
+	HitStopTimer = Time;
+	Flipbook->Stop();
+}
+
+void AFightPawn::DecreaseHitStopTimer(float deltaTime)
+{
+	HitStopTimer -= deltaTime;
 }
 
 void AFightPawn::AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape)

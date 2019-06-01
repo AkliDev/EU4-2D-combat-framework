@@ -10,6 +10,7 @@
  *
  */
 class AFightPawn;
+
 UCLASS()
 class FIGHTANPROJECT_API UHitBox : public UTraceBox
 {
@@ -23,6 +24,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 		TArray<AFightPawn*> HitPawns;
 
-	virtual void Deactivate() override;
+	UPROPERTY(EditAnywhere)
+		FHitBoxParams HitParams;
 
+	virtual void Deactivate() override;
+public:
+
+	virtual void Init(FBoxParams& params, FHitBoxParams& hitParams) override;
 };

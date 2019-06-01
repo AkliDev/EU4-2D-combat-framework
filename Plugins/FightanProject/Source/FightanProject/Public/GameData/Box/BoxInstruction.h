@@ -5,36 +5,12 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Classes/Engine/DataTable.h"
+#include "GameData/Box/BoxParams.h"
 #include "BoxInstruction.generated.h"
 
 /**
  *
  */
-
-UENUM(Blueprintable, Meta = (Bitflags))
-enum class BoxType : uint8
-{
-	HIT_BOX,
-	HURT_BOX
-};
-
-USTRUCT()
-struct FIGHTANPROJECT_API FBoxParams
-{
-	GENERATED_BODY()
-
-public:
-
-	FBoxParams();
-	FBoxParams(FVector position, FVector extent, float lifeTime);
-
-	UPROPERTY(EditAnywhere)
-		FVector Position;
-	UPROPERTY(EditAnywhere)
-		FVector Extent;
-	UPROPERTY(EditAnywhere)
-		float LifeTime;
-};
 
 USTRUCT()
 struct FIGHTANPROJECT_API FBoxData
@@ -47,7 +23,10 @@ public:
 		BoxType Type;
 
 	UPROPERTY(EditAnywhere)
-		FBoxParams Params;
+		FBoxParams BoxParams;
+
+	UPROPERTY(EditAnywhere)
+		FHitBoxParams HitParams;
 
 };
 

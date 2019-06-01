@@ -40,8 +40,8 @@ void UHitManager::CheckForOverlaps()
 						if (UCollisionUtility::AreBoxesIntersecting(hitBox, hurtBox) && !hitBox->HitPawns.Contains(pawnOther))
 						{
 							hitBox->HitPawns.Add(pawnOther);
-							pawnOther->BroadCastOnIsHit();
-							pawn->BroadCastOnHasHit();					
+							pawnOther->BroadCastOnIsHit(hitBox->HitParams);
+							pawn->BroadCastOnHasHit(hitBox->HitParams);
 						}
 					}
 				}

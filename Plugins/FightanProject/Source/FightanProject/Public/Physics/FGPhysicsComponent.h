@@ -24,7 +24,7 @@ public:
 	UFGPhysicsComponent();
 
 protected:
-
+	friend class UPhysicsWorld;
 	AFightPawn* OwningPawn;
 
 	UPROPERTY(VisibleAnywhere)

@@ -50,15 +50,17 @@ protected:
 	UFUNCTION()
 		UHurtBox* CreateHurtBox();
 
-	UHitBox* ActivateHitBox(FBoxParams& params);
+	UHitBox* ActivateHitBox(FBoxParams& params, FHitBoxParams& hitParams);
 	UHurtBox* ActivateHurtBox(FBoxParams& params);
 
 	void DeactivateAllActiveBoxes();
 
+	// Called every frame by Owning pawn
+	void UpdateComponent(float DeltaTime);
+
 public:
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 
 	void SetOwningPawn(AFightPawn* owningPawn);
 };

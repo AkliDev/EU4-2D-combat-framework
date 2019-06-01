@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Physics/Collision/Box/FGCollisionBoxBase.h"
-#include "GameData/Box/BoxInstruction.h"
+#include "GameData/Box/BoxParams.h"
 #include "TraceBox.generated.h"
 
 /**
@@ -33,4 +33,7 @@ protected:
 public:
 
 	virtual void Init(FBoxParams& params);
+
+	//init for hitboxes to override
+	virtual void Init(FBoxParams& params, FHitBoxParams& hitParams);
 };
