@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Classes/Sound/SoundWave.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
 #include "BoxParams.generated.h"
+
 
 /**
  * 
@@ -48,6 +51,16 @@ struct FIGHTANPROJECT_API FHitBoxParams
 public:
 	UPROPERTY(EditAnywhere)
 		AttackType Type;
+
 	UPROPERTY(EditAnywhere)
 		FVector2D HitStop;
+
+	UPROPERTY(EditAnywhere)
+		USoundWave* HitSound;
+
+	UPROPERTY(EditAnywhere)
+		UParticleSystem* HitEffect;
+
+	UPROPERTY(EditAnywhere)
+		FVector HitEffectPosition;
 };

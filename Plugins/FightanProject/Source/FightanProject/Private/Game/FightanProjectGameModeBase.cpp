@@ -11,6 +11,7 @@ AFightanProjectGameModeBase::AFightanProjectGameModeBase()
 void AFightanProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+	ManagerContainer = GetWorld()->SpawnActor<AManagerContainer>(FVector::ZeroVector, FRotator::ZeroRotator);
 	ChangeMenuWidget(StartingWidgetClass);
 }
 
@@ -30,4 +31,9 @@ void AFightanProjectGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewW
 			CurrentWidget->AddToViewport();
 		}
 	}
+}
+
+void AFightanProjectGameModeBase::AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape)
+{
+	Subject->AttachToComponent(DuctTape, FAttachmentTransformRules::KeepRelativeTransform);
 }

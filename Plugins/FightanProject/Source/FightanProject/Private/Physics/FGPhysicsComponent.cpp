@@ -65,6 +65,16 @@ void UFGPhysicsComponent::AddGravity(float DeltaTime)
 		Velocity.Z -= OwningPawn->GetCharacterStatsComponent()->Weight * DeltaTime;
 }
 
+void UFGPhysicsComponent::AddFriction(float DeltaTime)
+{
+	if (OwningPawn->GetCharacterStatsComponent() != nullptr && Velocity.X != 0)
+	{
+		Velocity.X -= OwningPawn->GetCharacterStatsComponent()->GroundFriction * FMath::Sign(Velocity.X) * DeltaTime;
+		if (FMath::Sign(Velocity.X) != FMath::Sign(PreviousVelocity.X))
+			Velocity.X = 0;
+	}
+}
+
 // Called every frame
 void UFGPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
@@ -152,7 +162,27 @@ void UFGPhysicsComponent::SetVelocity(FVector velocityVector)
 	Velocity = velocityVector;
 }
 
+void UFGPhysicsComponent::SetVelocityX(float value)
+{
+	Velocity.X = value;
+}
+
+void UFGPhysicsComponent::SetVelocityZ(float value)
+{
+	Velocity.Z = value;
+}
+
 void UFGPhysicsComponent::AddVelocity(FVector velocityVector)
 {
 	Velocity += velocityVector;
+}
+
+void UFGPhysicsComponent::AddVelocityX(float value)
+{
+	Velocity.X += value;
+}
+
+void UFGPhysicsComponent::AddVelocityZ(float value)
+{
+	Velocity.Z += value;
 }

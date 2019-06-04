@@ -41,6 +41,27 @@ FString UInputUtility::ConvertInputBitflagToBinaryString(uint32 inputBitflag)
 	return InputString;
 }
 
+uint32 UInputUtility::SwapBits(uint32 n, uint32 p1, uint32 p2)
+{
+	/* Move p1'th to rightmost side */
+	uint32 bit1 = (n >> p1) & 1;
+
+	/* Move p2'th to rightmost side */
+	uint32 bit2 = (n >> p2) & 1;
+
+	/* XOR the two bits */
+	uint32 x = (bit1 ^ bit2);
+
+	/* Put the xor bit back to their original positions */
+	x = (x << p1) | (x << p2);
+
+	/* XOR 'x' with the original number so that the
+	   two sets are swapped */
+	uint32 result = n ^ x;
+
+	return result;
+}
+
 /// <summary>Checks if the the given sequence is found within the given input buffer</summary>
 /// <param name="sel">Reference to subject pawn, an input buffer to validate preferably one owned by the subject pawn and pointer so sequence to match with the input buffer</param>  
 /// <returns>Bool, whether the input sequence was found withing the given input buffer</returns> 

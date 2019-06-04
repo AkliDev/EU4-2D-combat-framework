@@ -32,6 +32,8 @@ public:
 	//Converts Input Bitflag To BinaryString
 	static FString ConvertInputBitflagToBinaryString(uint32 inputBitflag);
 
+	static uint32 SwapBits(uint32 n, uint32 p1, uint32 p2);
+
 	///Input validation///
 
 	//Iterates through the buffer and compares it to a sequence 

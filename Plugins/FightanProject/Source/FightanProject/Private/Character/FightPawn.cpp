@@ -58,10 +58,13 @@ void AFightPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SwitchState(CurrentState);
+
 	if (UFightanProjectGameInstance* gameInstance = Cast<UFightanProjectGameInstance>(GetGameInstance()))
-	{
 		GameInstance = gameInstance;
-	}
+
+	if (AFightanProjectGameModeBase* gameMode = Cast<AFightanProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
+		GameMode = gameMode;
 
 	if (InputBufferComponent != nullptr)
 		InputBufferComponent->BufferItemAdd.AddDynamic(this, &AFightPawn::CheckStateLinks);
@@ -104,11 +107,53 @@ void AFightPawn::Tick(float DeltaTime)
 
 }
 
+void AFightPawn::SetVelocity(FVector velocityVector)
+{
+	if (bIsFlipped)
+		velocityVector.X = -velocityVector.X;
+
+	PhysicsComponent->SetVelocity(velocityVector);
+}
+
+void AFightPawn::SetVelocityX(float value)
+{
+	if (bIsFlipped)
+		value = -value;
+
+	PhysicsComponent->SetVelocityX(value);
+}
+
+void AFightPawn::SetVelocityZ(float value)
+{
+	PhysicsComponent->SetVelocityZ(value);
+}
+
+void AFightPawn::AddVelocity(FVector velocityVector)
+{
+	if (bIsFlipped)
+		velocityVector.X = -velocityVector.X;
+
+	PhysicsComponent->AddVelocity(velocityVector);
+}
+
+void AFightPawn::AddVelocityX(float value)
+{
+	if (bIsFlipped)
+		value = -value;
+
+	PhysicsComponent->AddVelocityX(value);
+}
+
+void AFightPawn::AddVelocityZ(float value)
+{
+	PhysicsComponent->AddVelocityZ(value);
+}
 
 void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams)
 {
 	OnIsHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HURT!!!"));
+	SwitchState(PainState);
 	SetHitStop(HitParams.HitStop.Y);
 }
 
@@ -116,6 +161,9 @@ void AFightPawn::BroadCastOnHasHit(FHitBoxParams& HitParams)
 {
 	OnHasHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HIT!!!"));
+	AudioComponent->SetSound(HitParams.HitSound);
+	AudioComponent->Play();
+	GameMode->GetManagerContainer()->GetVFXManager()->ActivateParticleSystemComponent(HitParams.HitEffect, HitParams.HitEffectPosition + Container->GetComponentLocation(), FRotator::ZeroRotator,FVector::ZeroVector);
 	SetHitStop(HitParams.HitStop.X);
 }
 
@@ -155,17 +203,21 @@ void AFightPawn::ExecuteTickInstructions()
 				{
 					for (FBoxData& box : BoxInstructionRow->FrameBoxes)
 					{
+						//We need to make edits to the position of the box without editing the reference that is why we copy it
+						FBoxParams params = box.BoxParams;
+						if (bIsFlipped)
+							params.Position.X = -params.Position.X;
 
 						switch (box.Type)
 						{
 						case BoxType::HIT_BOX:
 
-							BoxDataHandler->ActivateHitBox(box.BoxParams, box.HitParams);
+							BoxDataHandler->ActivateHitBox(params, box.HitParams);
 							break;
 
 						case BoxType::HURT_BOX:
 
-							BoxDataHandler->ActivateHurtBox(box.BoxParams);
+							BoxDataHandler->ActivateHurtBox(params);
 							break;
 						}
 
@@ -270,6 +322,7 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 
 	Flipbook->SetLooping(CurrentState->bLoops);
 	Flipbook->Play();
+	ExecuteTickInstructions();
 }
 
 void AFightPawn::SetHitStop(float Time)
@@ -281,6 +334,12 @@ void AFightPawn::SetHitStop(float Time)
 void AFightPawn::DecreaseHitStopTimer(float deltaTime)
 {
 	HitStopTimer -= deltaTime;
+}
+
+void AFightPawn::FlipCharacter()
+{
+	bIsFlipped ^= true;
+	Flipbook->AddLocalRotation(FRotator(0, 180, 0));
 }
 
 void AFightPawn::AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape)

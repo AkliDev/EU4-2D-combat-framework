@@ -49,7 +49,7 @@ public:
 protected:
 
 	friend class AFightPawn;
-
+	AFightPawn* OwningPawn;
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
@@ -72,12 +72,12 @@ protected:
 	UFUNCTION()
 		void SetCurrentInput(uint32 inputBitflag);
 
+	UFUNCTION()
+		void FlipHorizontalInput();
+
 	//Adds Current controller state to the inputbuffer
 	UFUNCTION()
 		void AddInputBuffer();
-
-
-
 public:
 
 	//Current controller state

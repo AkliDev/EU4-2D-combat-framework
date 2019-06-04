@@ -50,9 +50,14 @@ protected:
 	UFUNCTION()
 		void UpdateLocation();
 
-	
+	UFUNCTION()
+		void AddGravity(float DeltaTime);
+
+	UFUNCTION()
+		void AddFriction(float DeltaTime);
 
 	void CheckVelocityFlip();
+
 
 public:
 
@@ -61,14 +66,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION()
-		void AddGravity(float DeltaTime);
-
-	UFUNCTION(BlueprintCallable)
-		void SetVelocity(FVector velocityVector);
-
-	UFUNCTION(BlueprintCallable)
-		void AddVelocity(FVector velocityVector);
+	void SetVelocity(FVector velocityVector);
+	void SetVelocityX(float value);
+	void SetVelocityZ(float value);
+	void AddVelocity(FVector velocityVector);
+	void AddVelocityX(float value);
+	void AddVelocityZ(float value);
 
 	void FireCollisionEvents(FVector OverLap);
 

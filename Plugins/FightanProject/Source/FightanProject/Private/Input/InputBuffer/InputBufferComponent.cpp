@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Input/InputBuffer/InputBufferComponent.h"
+#include "InputUtility.h"
 
 // Sets default values for this component's properties
 UInputBufferComponent::UInputBufferComponent()
@@ -21,8 +22,9 @@ void UInputBufferComponent::BeginPlay()
 	Super::BeginPlay();
 
 	//Get ref to owning pawn's player controller. If it is not AFightPlayerController the CRASH or something
-	if (APawn* const pawn = Cast<APawn>(GetOwner()))
+	if (AFightPawn* const pawn = Cast<AFightPawn>(GetOwner()))
 	{
+		OwningPawn = pawn;
 		if (AFightPlayerController* const playerController = Cast<AFightPlayerController>(pawn->GetController()))
 		{
 			PlayerController = playerController;
@@ -49,6 +51,14 @@ void UInputBufferComponent::BeginPlay()
 void UInputBufferComponent::SetCurrentInput(uint32 inputBitflag)
 {
 	CurrentInpitBitflag = inputBitflag;
+
+	if (OwningPawn->IsFlipped())
+		FlipHorizontalInput();
+}
+
+void UInputBufferComponent::FlipHorizontalInput()
+{
+	CurrentInpitBitflag = UInputUtility::SwapBits(CurrentInpitBitflag, 32 - (int32)CardinalDirection::NUM + (uint32)CardinalDirection::LEFT, 32 - (int32)CardinalDirection::NUM + (uint32)CardinalDirection::Right);
 }
 
 void UInputBufferComponent::AddInputBuffer()
@@ -97,12 +107,11 @@ void UInputBufferComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
 	CurrentInput->UpdateInputItem(CurrentInpitBitflag, PreviousInpitBitflag, DeltaTime);
-	if (PreviousInpitBitflag != CurrentInpitBitflag)
-	{
+
+	if (PreviousInpitBitflag != CurrentInpitBitflag)	
 		AddInputBuffer();
-	}
+	
 
 	//Set Previous input bitflag. TODO This should probably be it's own method
 	PreviousInpitBitflag = CurrentInpitBitflag;

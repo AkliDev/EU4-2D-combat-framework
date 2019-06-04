@@ -18,12 +18,14 @@
 #include "StateMachine/Events/EventEnums.h"
 #include "CharacterStatsComponent.h"
 #include "BoxDataHandlerComponent.h"
+#include "Managers/VFXManager.h"
 #include "FightPawn.generated.h"
 
 
 //Forward declaration to prevent circular dependency 
 struct FStateMachineResult;
 class UFightPawnState;
+class AFightanProjectGameModeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIsHit, FHitBoxParams&, HitParams);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHasHit, FHitBoxParams&, HitParams);
@@ -41,6 +43,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+#pragma region Components
 
 	UPROPERTY(EditAnywhere)
 		UCharacterStatsComponent* Stats;
@@ -77,6 +81,12 @@ protected:
 	//Input buffer that listens to the pawn's player controller
 	UPROPERTY(VisibleAnywhere)
 		UAudioComponent* AudioComponent;
+#pragma endregion
+
+	UPROPERTY(EditAnywhere)
+		bool bIsFlipped;
+
+#pragma region Counters and timers
 
 	UPROPERTY(EditAnywhere)
 		float TimeInState;
@@ -91,8 +101,22 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		float HitStopTimer;
+
 	UPROPERTY(EditAnywhere)
 		float PreviousHitStopTime;
+
+	UPROPERTY(EditAnywhere)
+		float HitStunTimer;
+
+#pragma endregion
+
+
+#pragma region PainStates pointers
+
+	UPROPERTY(EditAnywhere)
+		UFightPawnState* PainState;
+
+#pragma endregion 
 
 	UFUNCTION()
 		void ExecuteTickInstructions();
@@ -112,16 +136,26 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		void SwitchState(UFightPawnState* DestinationState);
 
-	FOnIsHit OnIsHit;
-	FOnHasHit OnHasHit;
-
-	FOnHitStopEnd OnHitStopEnd;
-
 	UFUNCTION()
 		void SetHitStop(float time);
 
 	UFUNCTION()
 		void DecreaseHitStopTimer(float deltaTime);
+
+	UFUNCTION()
+		void FlipCharacter();
+
+
+
+#pragma region Events
+
+	FOnIsHit OnIsHit;
+	FOnHasHit OnHasHit;
+
+	FOnHitStopEnd OnHitStopEnd;
+#pragma endregion 
+
+
 
 public:
 	// Called every frame
@@ -129,6 +163,29 @@ public:
 
 	// Called to bind functionality to input
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+#pragma region Instruction Functions
+
+	UFUNCTION(BlueprintCallable)
+		void SetVelocity(FVector velocityVector);
+
+	UFUNCTION(BlueprintCallable)
+		void SetVelocityX(float value);
+
+	UFUNCTION(BlueprintCallable)
+		void SetVelocityZ(float value);
+
+	UFUNCTION(BlueprintCallable)
+		void AddVelocity(FVector velocityVector);
+
+	UFUNCTION(BlueprintCallable)
+		void AddVelocityX(float value);
+
+	UFUNCTION(BlueprintCallable)
+		void AddVelocityZ(float value);
+
+#pragma endregion 
+
 
 	UFUNCTION()
 		void BroadCastOnIsHit(FHitBoxParams& HitParams);
@@ -141,6 +198,9 @@ public:
 
 	UPROPERTY()
 		UFightanProjectGameInstance* GameInstance;
+
+	UPROPERTY(EditAnywhere)
+		AFightanProjectGameModeBase* GameMode;
 
 	UFUNCTION(BlueprintCallable)
 		float GetStateTimer() const;
@@ -165,6 +225,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		float GetHitStopTime() const;
+
+	UFUNCTION(BlueprintCallable)
+		bool IsFlipped() const;
 };
 
 
@@ -206,4 +269,9 @@ FORCEINLINE UBoxDataHandlerComponent* AFightPawn::GetBoxDataHandlerComponent() c
 FORCEINLINE float AFightPawn::GetHitStopTime() const
 {
 	return HitStopTimer;
+}
+
+FORCEINLINE bool AFightPawn::IsFlipped() const
+{
+	return bIsFlipped;
 }
