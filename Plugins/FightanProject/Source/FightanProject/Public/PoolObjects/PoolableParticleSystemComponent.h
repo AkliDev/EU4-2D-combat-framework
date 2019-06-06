@@ -7,7 +7,7 @@
 #include "PoolableParticleSystemComponent.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class FIGHTANPROJECT_API UPoolableParticleSystemComponent : public UParticleSystemComponent
@@ -16,13 +16,17 @@ class FIGHTANPROJECT_API UPoolableParticleSystemComponent : public UParticleSyst
 protected:
 	friend class UVFXManager;
 
-	int32 bInUse : 1;
+	UPROPERTY(EditAnywhere)
+		uint32 bInUse : 1;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+		void SetInactive(UParticleSystemComponent* pSystem);
+
 public:
 
 	virtual void Init(UParticleSystem* particle, FVector position, FRotator rotation, FVector scale);
-	
+
 };

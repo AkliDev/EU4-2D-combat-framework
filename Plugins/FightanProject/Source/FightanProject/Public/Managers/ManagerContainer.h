@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "VFXManager.h"
+#include "SFXManager.h"
 #include "ManagerContainer.generated.h"
 
 UCLASS()
@@ -20,6 +21,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 		UVFXManager* VFXManager;
+	UPROPERTY(VisibleAnywhere)
+		USFXManager* SFXManager;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,10 +32,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UVFXManager* GetVFXManager() const;
+	USFXManager* GetSFXManager() const;
 
 };
 
 FORCEINLINE UVFXManager* AManagerContainer::GetVFXManager() const
 {
 	return VFXManager;
+}
+FORCEINLINE USFXManager* AManagerContainer::GetSFXManager() const
+{
+	return SFXManager;
 }

@@ -100,13 +100,19 @@ protected:
 		int BoxInstructionCounter;
 
 	UPROPERTY(EditAnywhere)
+		float HitStunTimer;
+
+	UPROPERTY(EditAnywhere)
 		float HitStopTimer;
 
 	UPROPERTY(EditAnywhere)
 		float PreviousHitStopTime;
 
 	UPROPERTY(EditAnywhere)
-		float HitStunTimer;
+		float HitRumbleIntensity;
+
+	UPROPERTY(EditAnywhere)
+		float HitRumbleSpeed;
 
 #pragma endregion
 
@@ -141,6 +147,9 @@ protected:
 
 	UFUNCTION()
 		void DecreaseHitStopTimer(float deltaTime);
+
+	UFUNCTION()
+		void DoHitRumble();
 
 	UFUNCTION()
 		void FlipCharacter();
@@ -188,10 +197,10 @@ public:
 
 
 	UFUNCTION()
-		void BroadCastOnIsHit(FHitBoxParams& HitParams);
+		void BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn);
 
 	UFUNCTION()
-		void BroadCastOnHasHit(FHitBoxParams& HitParams);
+		void BroadCastOnHasHit(FHitBoxParams& HitParams, AFightPawn* pawnPawn);
 
 	UFUNCTION()
 		void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);

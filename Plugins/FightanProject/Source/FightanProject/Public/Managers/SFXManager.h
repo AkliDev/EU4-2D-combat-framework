@@ -4,35 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "PoolObjects/PoolableParticleSystemComponent.h"
-#include "VFXManager.generated.h"
+#include "PoolObjects/PoolableAudioComponent.h"
+#include "SFXManager.generated.h"
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class FIGHTANPROJECT_API UVFXManager : public USceneComponent
+class FIGHTANPROJECT_API USFXManager : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UVFXManager();
+	USFXManager();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
-		int ParticlePoolSize;
+		int AudioComponentPoolSize;
 
 	UPROPERTY(EditAnywhere)
-		TArray<UPoolableParticleSystemComponent*> ParticleSystemPool;
+		TArray<UPoolableAudioComponent*> AudioComponentPool;
 
-	UPoolableParticleSystemComponent* CreateParticleSystemComponent();
-	
+	UPoolableAudioComponent* CreateUAudioComponentComponent();
+
 public:
-
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPoolableParticleSystemComponent* ActivateParticleSystemComponent(UParticleSystem* particle, FVector position, FRotator rotation, FVector scale);
+	UPoolableAudioComponent* ActivateAudioComponent(USoundWave* soundWave, FVector postion);
 };

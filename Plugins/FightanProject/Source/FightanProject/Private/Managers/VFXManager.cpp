@@ -13,6 +13,7 @@ UVFXManager::UVFXManager()
 
 	// ...
 	ParticlePoolSize = 25;
+	SetMobility(EComponentMobility::Static);
 }
 
 
@@ -38,7 +39,7 @@ UPoolableParticleSystemComponent*  UVFXManager::CreateParticleSystemComponent()
 
 UPoolableParticleSystemComponent* UVFXManager::ActivateParticleSystemComponent(UParticleSystem* particleTemplate, FVector position, FRotator rotation, FVector scale)
 {
-	//search in the pool for a hitbox that we can use. If one is found we call init on it and return it
+	//search in the pool for a ParticleSystemComponent that we can use. If one is found we call init on it and return it
 	for (UPoolableParticleSystemComponent* particle : ParticleSystemPool)
 	{
 		if (particle->bInUse == false)
@@ -47,17 +48,16 @@ UPoolableParticleSystemComponent* UVFXManager::ActivateParticleSystemComponent(U
 			return particle;
 		}
 	}
-	//if all boxes are in use the increase the amount of hit boxes in the pool
+	//if all ParticleSystemComponent are in use the increase the amount of hit boxes in the pool
 	for (int i = 0; i < ParticlePoolSize; i++)
 	{
 		ParticleSystemPool.Add(CreateParticleSystemComponent());
 	}
 
-	//After we increased the amount of boxes we search for one again and return it. 
+	//After we increased the amount of ParticleSystemComponent we search for one again and return it. 
 	return ActivateParticleSystemComponent(particleTemplate, position, rotation, scale);
 
 }
-
 
 // Called every frame
 void UVFXManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

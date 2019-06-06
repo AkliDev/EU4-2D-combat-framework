@@ -10,7 +10,7 @@
 
 
 /**
- * 
+ *
  */
 UENUM(Blueprintable, Meta = (Bitflags))
 enum class BoxType : uint8
@@ -27,7 +27,6 @@ struct FIGHTANPROJECT_API FBoxParams
 public:
 
 	FBoxParams();
-	FBoxParams(FVector position, FVector extent, float lifeTime);
 
 	UPROPERTY(EditAnywhere)
 		FVector Position;
@@ -49,8 +48,23 @@ struct FIGHTANPROJECT_API FHitBoxParams
 	GENERATED_BODY()
 
 public:
+
+	FHitBoxParams();
+
 	UPROPERTY(EditAnywhere)
 		AttackType Type;
+
+	UPROPERTY(EditAnywhere)
+		float HitStunTime;
+
+	UPROPERTY(EditAnywhere)
+		float HitRumbleIntensity;
+
+	UPROPERTY(EditAnywhere)
+		float HitRumbleSpeed;
+
+	UPROPERTY(EditAnywhere)
+		FVector GroundKnockBackVelocity;
 
 	UPROPERTY(EditAnywhere)
 		FVector2D HitStop;

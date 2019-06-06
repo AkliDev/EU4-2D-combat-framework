@@ -88,6 +88,7 @@ void AFightPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	DecreaseHitStopTimer(DeltaTime);
+
 	if (PreviousHitStopTime > 0 && HitStopTimer <= 0)
 	{
 		Flipbook->Play();
@@ -101,10 +102,13 @@ void AFightPawn::Tick(float DeltaTime)
 		ExecuteTickInstructions();
 		BoxDataHandler->UpdateComponent(DeltaTime);
 	}
+	else
+	{
+		DoHitRumble();
+	}
 
 
 	PreviousHitStopTime = HitStopTimer;
-
 }
 
 void AFightPawn::SetVelocity(FVector velocityVector)
@@ -149,21 +153,38 @@ void AFightPawn::AddVelocityZ(float value)
 	PhysicsComponent->AddVelocityZ(value);
 }
 
-void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams)
+void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn)
 {
 	OnIsHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HURT!!!"));
+
+	if (initPawn->IsFlipped() == bIsFlipped)
+		FlipCharacter();
+
+	FVector knockBackVelocity = HitParams.GroundKnockBackVelocity;
+	if (initPawn->IsFlipped())
+		knockBackVelocity.X = -knockBackVelocity.X;
+	PhysicsComponent->SetVelocity(knockBackVelocity);
+
 	SwitchState(PainState);
 	SetHitStop(HitParams.HitStop.Y);
+	HitRumbleIntensity = HitParams.HitRumbleIntensity;
+	HitRumbleSpeed = HitParams.HitRumbleSpeed;
 }
 
-void AFightPawn::BroadCastOnHasHit(FHitBoxParams& HitParams)
+void AFightPawn::BroadCastOnHasHit(FHitBoxParams& HitParams, AFightPawn* hitPawn)
 {
 	OnHasHit.Broadcast(HitParams);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HIT!!!"));
-	AudioComponent->SetSound(HitParams.HitSound);
-	AudioComponent->Play();
-	GameMode->GetManagerContainer()->GetVFXManager()->ActivateParticleSystemComponent(HitParams.HitEffect, HitParams.HitEffectPosition + Container->GetComponentLocation(), FRotator::ZeroRotator,FVector::ZeroVector);
+
+	FVector hitEffectPosition = HitParams.HitEffectPosition;
+
+	GameMode->GetManagerContainer()->GetSFXManager()->ActivateAudioComponent(HitParams.HitSound, Container->GetComponentLocation());
+
+	if (bIsFlipped)
+		hitEffectPosition.X = -hitEffectPosition.X;
+
+	GameMode->GetManagerContainer()->GetVFXManager()->ActivateParticleSystemComponent(HitParams.HitEffect, hitEffectPosition + Container->GetComponentLocation(), FRotator::ZeroRotator, FVector::ZeroVector);
 	SetHitStop(HitParams.HitStop.X);
 }
 
@@ -321,7 +342,7 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	BoxDataHandler->DeactivateAllActiveBoxes();
 
 	Flipbook->SetLooping(CurrentState->bLoops);
-	Flipbook->Play();
+	Flipbook->PlayFromStart();
 	ExecuteTickInstructions();
 }
 
@@ -334,6 +355,18 @@ void AFightPawn::SetHitStop(float Time)
 void AFightPawn::DecreaseHitStopTimer(float deltaTime)
 {
 	HitStopTimer -= deltaTime;
+
+	if (HitStopTimer <= 0)
+	{
+		OnHitStopEnd.Broadcast();
+		Flipbook->SetRelativeLocation(FVector::ZeroVector);
+	}
+}
+
+void AFightPawn::DoHitRumble()
+{
+	float rumblePosition = FMath::Sin(UKismetSystemLibrary::GetGameTimeInSeconds(this) * HitRumbleSpeed) * HitRumbleIntensity;
+	Flipbook->SetRelativeLocation(FVector(rumblePosition, 0, 0));
 }
 
 void AFightPawn::FlipCharacter()
