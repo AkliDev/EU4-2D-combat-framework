@@ -45,10 +45,6 @@ AFightPawn::AFightPawn()
 	Flipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Skin"));
 	Flipbook->SetupAttachment(Container);
 
-	//Create AudioComponent
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-	AudioComponent->SetupAttachment(RootComponent);
-
 	TimeInState = 0;
 	StateInstructionCounter = 0;
 }
@@ -99,8 +95,9 @@ void AFightPawn::Tick(float DeltaTime)
 	{
 		TimeInState += DeltaTime;
 		CheckOnFinishState();
-		ExecuteTickInstructions();
+		PhysicsComponent->UpdateComponent(DeltaTime);
 		BoxDataHandler->UpdateComponent(DeltaTime);
+		ExecuteTickInstructions();
 	}
 	else
 	{
@@ -111,52 +108,9 @@ void AFightPawn::Tick(float DeltaTime)
 	PreviousHitStopTime = HitStopTimer;
 }
 
-void AFightPawn::SetVelocity(FVector velocityVector)
-{
-	if (bIsFlipped)
-		velocityVector.X = -velocityVector.X;
-
-	PhysicsComponent->SetVelocity(velocityVector);
-}
-
-void AFightPawn::SetVelocityX(float value)
-{
-	if (bIsFlipped)
-		value = -value;
-
-	PhysicsComponent->SetVelocityX(value);
-}
-
-void AFightPawn::SetVelocityZ(float value)
-{
-	PhysicsComponent->SetVelocityZ(value);
-}
-
-void AFightPawn::AddVelocity(FVector velocityVector)
-{
-	if (bIsFlipped)
-		velocityVector.X = -velocityVector.X;
-
-	PhysicsComponent->AddVelocity(velocityVector);
-}
-
-void AFightPawn::AddVelocityX(float value)
-{
-	if (bIsFlipped)
-		value = -value;
-
-	PhysicsComponent->AddVelocityX(value);
-}
-
-void AFightPawn::AddVelocityZ(float value)
-{
-	PhysicsComponent->AddVelocityZ(value);
-}
-
 void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn)
 {
 	OnIsHit.Broadcast(HitParams);
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HURT!!!"));
 
 	if (initPawn->IsFlipped() == bIsFlipped)
 		FlipCharacter();
@@ -175,16 +129,8 @@ void AFightPawn::BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn
 void AFightPawn::BroadCastOnHasHit(FHitBoxParams& HitParams, AFightPawn* hitPawn)
 {
 	OnHasHit.Broadcast(HitParams);
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("HIT!!!"));
 
-	FVector hitEffectPosition = HitParams.HitEffectPosition;
-
-	GameMode->GetManagerContainer()->GetSFXManager()->ActivateAudioComponent(HitParams.HitSound, Container->GetComponentLocation());
-
-	if (bIsFlipped)
-		hitEffectPosition.X = -hitEffectPosition.X;
-
-	GameMode->GetManagerContainer()->GetVFXManager()->ActivateParticleSystemComponent(HitParams.HitEffect, hitEffectPosition + Container->GetComponentLocation(), FRotator::ZeroRotator, FVector::ZeroVector);
+	ExecuteInstructions(HitParams.HitInstrucion);
 	SetHitStop(HitParams.HitStop.X);
 }
 
@@ -378,4 +324,64 @@ void AFightPawn::FlipCharacter()
 void AFightPawn::AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape)
 {
 	Subject->AttachToComponent(DuctTape, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void AFightPawn::SetVelocity(FVector velocityVector)
+{
+	if (bIsFlipped)
+		velocityVector.X = -velocityVector.X;
+
+	PhysicsComponent->SetVelocity(velocityVector);
+}
+
+void AFightPawn::SetVelocityX(float value)
+{
+	if (bIsFlipped)
+		value = -value;
+
+	PhysicsComponent->SetVelocityX(value);
+}
+
+void AFightPawn::SetVelocityZ(float value)
+{
+	PhysicsComponent->SetVelocityZ(value);
+}
+
+void AFightPawn::AddVelocity(FVector velocityVector)
+{
+	if (bIsFlipped)
+		velocityVector.X = -velocityVector.X;
+
+	PhysicsComponent->AddVelocity(velocityVector);
+}
+
+void AFightPawn::AddVelocityX(float value)
+{
+	if (bIsFlipped)
+		value = -value;
+
+	PhysicsComponent->AddVelocityX(value);
+}
+
+void AFightPawn::AddVelocityZ(float value)
+{
+	PhysicsComponent->AddVelocityZ(value);
+}
+
+void AFightPawn::SetGroundFlag(bool value)
+{
+	bIsGrounded = value;
+}
+
+void AFightPawn::PlaySound(USoundWave* sound)
+{
+	GameMode->GetManagerContainer()->GetSFXManager()->ActivateAudioComponent(sound, Container->GetComponentLocation());
+}
+
+void AFightPawn::SpawnParticle(UParticleSystem* particle, FVector position)
+{
+	if (bIsFlipped)
+		position.X = -position.X;
+
+	GameMode->GetManagerContainer()->GetVFXManager()->ActivateParticleSystemComponent(particle, position + Container->GetComponentLocation(), FRotator::ZeroRotator, FVector::ZeroVector);
 }

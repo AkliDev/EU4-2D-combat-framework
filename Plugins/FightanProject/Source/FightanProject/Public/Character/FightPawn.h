@@ -77,14 +77,16 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 		UEventStateChangeComponent* EventStateChangeComponent;
-
-	//Input buffer that listens to the pawn's player controller
-	UPROPERTY(VisibleAnywhere)
-		UAudioComponent* AudioComponent;
 #pragma endregion
 
+#pragma region Character Flags
+
 	UPROPERTY(EditAnywhere)
-		bool bIsFlipped;
+		uint32 bIsFlipped : 1;
+
+	UPROPERTY(EditAnywhere)
+		uint32 bIsGrounded : 1;
+#pragma endregion
 
 #pragma region Counters and timers
 
@@ -153,9 +155,6 @@ protected:
 
 	UFUNCTION()
 		void FlipCharacter();
-
-
-
 #pragma region Events
 
 	FOnIsHit OnIsHit;
@@ -172,6 +171,50 @@ public:
 
 	// Called to bind functionality to input
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+		void BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn);
+
+	UFUNCTION()
+		void BroadCastOnHasHit(FHitBoxParams& HitParams, AFightPawn* pawnPawn);
+
+	UFUNCTION()
+		void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
+
+	UPROPERTY()
+		UFightanProjectGameInstance* GameInstance;
+
+	UPROPERTY(EditAnywhere)
+		AFightanProjectGameModeBase* GameMode;
+
+#pragma region Getters
+	UFUNCTION(BlueprintCallable)
+		float GetStateTimer() const;
+
+	UFUNCTION(BlueprintCallable)
+		UCharacterStatsComponent* GetCharacterStatsComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UFGPhysicsComponent* GetPhysicsComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UCharacterStatsComponent* GetStatsComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UEventStateChangeComponent* GetEventStateChangeComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		UBoxDataHandlerComponent* GetBoxDataHandlerComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+		float GetHitStopTime() const;
+
+	UFUNCTION(BlueprintCallable)
+		bool IsFlipped() const;
+
+	UFUNCTION(BlueprintCallable)
+		bool IsGrounded() const;
+#pragma endregion 
 
 #pragma region Instruction Functions
 
@@ -193,50 +236,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddVelocityZ(float value);
 
+	UFUNCTION(BlueprintCallable)
+		void SetGroundFlag(bool value);
+
+	UFUNCTION(BlueprintCallable)
+		void PlaySound(USoundWave* sound);
+
+	UFUNCTION(BlueprintCallable)
+		void SpawnParticle(UParticleSystem* particle, FVector Position);
+
+	
+
 #pragma endregion 
-
-
-	UFUNCTION()
-		void BroadCastOnIsHit(FHitBoxParams& HitParams, AFightPawn* initPawn);
-
-	UFUNCTION()
-		void BroadCastOnHasHit(FHitBoxParams& HitParams, AFightPawn* pawnPawn);
-
-	UFUNCTION()
-		void AttachSceneComponent(USceneComponent* Subject, USceneComponent* DuctTape);
-
-	UPROPERTY()
-		UFightanProjectGameInstance* GameInstance;
-
-	UPROPERTY(EditAnywhere)
-		AFightanProjectGameModeBase* GameMode;
-
-	UFUNCTION(BlueprintCallable)
-		float GetStateTimer() const;
-
-	UFUNCTION(BlueprintCallable)
-		UCharacterStatsComponent* GetCharacterStatsComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		UFGPhysicsComponent* GetPhysicsComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		UAudioComponent* GetAudioComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		UCharacterStatsComponent* GetStatsComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		UEventStateChangeComponent* GetEventStateChangeComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		UBoxDataHandlerComponent* GetBoxDataHandlerComponent() const;
-
-	UFUNCTION(BlueprintCallable)
-		float GetHitStopTime() const;
-
-	UFUNCTION(BlueprintCallable)
-		bool IsFlipped() const;
 };
 
 
@@ -253,11 +264,6 @@ FORCEINLINE UCharacterStatsComponent* AFightPawn::GetCharacterStatsComponent() c
 FORCEINLINE UFGPhysicsComponent* AFightPawn::GetPhysicsComponent() const
 {
 	return PhysicsComponent;
-}
-
-FORCEINLINE UAudioComponent* AFightPawn::GetAudioComponent() const
-{
-	return AudioComponent;
 }
 
 FORCEINLINE UCharacterStatsComponent* AFightPawn::GetStatsComponent() const
@@ -283,4 +289,9 @@ FORCEINLINE float AFightPawn::GetHitStopTime() const
 FORCEINLINE bool AFightPawn::IsFlipped() const
 {
 	return bIsFlipped;
+}
+
+FORCEINLINE bool AFightPawn::IsGrounded() const
+{
+	return bIsGrounded;
 }

@@ -192,15 +192,6 @@ void UPhysicsWorld::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	for (UFGPhysicsComponent* entity : PhysicsEntities)
-	{
-		if (entity->OwningPawn->GetHitStopTime() <= 0)
-		{
-			entity->AddGravity(DeltaTime);
-			entity->AddFriction(DeltaTime);
-		}
-	}
-
 	TranslatePushBoxes(DeltaTime);
 }
 

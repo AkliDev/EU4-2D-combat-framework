@@ -43,10 +43,10 @@ void UFGPhysicsComponent::SetPushBoxZOffsetOnChange()
 	{
 		if (PushBox->GetScaledBoxExtent().Z >= PreviousPushBoxZExtend)
 			PushBox->SetRelativeLocation(Container->GetRelativeTransform().GetLocation() + FVector(0, 0, PushBox->GetScaledBoxExtent().Z));
-		else if(PushBox->GetScaledBoxExtent().Z <= PreviousPushBoxZExtend)
+		else if (PushBox->GetScaledBoxExtent().Z <= PreviousPushBoxZExtend)
 			PushBox->SetRelativeLocation(PushBox->GetRelativeTransform().GetLocation() - FVector(0, 0, PreviousPushBoxZExtend - PushBox->GetScaledBoxExtent().Z));
 	}
-	
+
 
 	PreviousPushBoxZExtend = PushBox->GetScaledBoxExtent().Z;
 }
@@ -67,23 +67,25 @@ void UFGPhysicsComponent::AddGravity(float DeltaTime)
 
 void UFGPhysicsComponent::AddFriction(float DeltaTime)
 {
-	if (OwningPawn->GetCharacterStatsComponent() != nullptr && Velocity.X != 0)
+	if (OwningPawn->GetCharacterStatsComponent() != nullptr && Velocity.X != 0 && PreviousVelocity.X != 0)
 	{
-		Velocity.X -= OwningPawn->GetCharacterStatsComponent()->GroundFriction * FMath::Sign(Velocity.X) * DeltaTime;
-		if (FMath::Sign(Velocity.X) != FMath::Sign(PreviousVelocity.X))
-			Velocity.X = 0;
+		if (OwningPawn->IsGrounded())
+		{
+			Velocity.X -= OwningPawn->GetCharacterStatsComponent()->GroundFriction * FMath::Sign(Velocity.X) * DeltaTime;
+			if (FMath::Sign(Velocity.X) != FMath::Sign(PreviousVelocity.X))
+				Velocity.X = 0;
+		}
 	}
 }
 
 // Called every frame
-void UFGPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+void UFGPhysicsComponent::UpdateComponent(float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	AddGravity(DeltaTime);
+	AddFriction(DeltaTime);
 	SetPushBoxZOffsetOnChange();
-
 	CheckVelocityFlip();
+
 	PreviousVelocity = Velocity;
 }
 
@@ -129,14 +131,20 @@ void UFGPhysicsComponent::FireCollisionEvents(FVector Overlap)
 	if (Overlap.X > 0)
 	{
 		Velocity.X = 0;
-		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_BEHIND);
+		if (OwningPawn->IsFlipped())
+			OnPhysicsEvent.Broadcast(Events::ON_COLLISION_FRONT);
+		else
+			OnPhysicsEvent.Broadcast(Events::ON_COLLISION_BEHIND);
 	}
 
 	//Right Collision
 	if (Overlap.X < 0)
 	{
 		Velocity.X = 0;
-		OnPhysicsEvent.Broadcast(Events::ON_COLLISION_FRONT);
+		if (OwningPawn->IsFlipped())
+			OnPhysicsEvent.Broadcast(Events::ON_COLLISION_BEHIND);
+		else 
+			OnPhysicsEvent.Broadcast(Events::ON_COLLISION_FRONT);
 	}
 }
 

@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Classes/Engine/DataTable.h"
+
+#include "Classes/Particles/ParticleSystemComponent.h"
 #include "Classes/Sound/SoundWave.h"
 
 #include "StateMachine/Events/EventEnums.h"
@@ -22,6 +24,8 @@ struct FIGHTANPROJECT_API FInstructionParameter
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
+		uint32 Bool :1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		int Int;
@@ -36,13 +40,16 @@ public:
 		FVector Vector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
-		USoundWave* Sound;
+		Events Event;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		UFightPawnState* State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
-		Events Event;
+		USoundWave* Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
+		UParticleSystem* Particle;
 };
 
 UCLASS(Blueprintable)

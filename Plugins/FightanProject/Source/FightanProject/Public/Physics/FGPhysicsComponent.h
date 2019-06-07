@@ -64,7 +64,7 @@ public:
 	FOnPhysicsEvent OnPhysicsEvent;
 
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void UpdateComponent(float DeltaTime);
 
 	void SetVelocity(FVector velocityVector);
 	void SetVelocityX(float value);

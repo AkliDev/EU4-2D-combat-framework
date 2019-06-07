@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Classes/Sound/SoundWave.h"
 #include "Runtime/Engine/Classes/Particles/ParticleSystem.h"
+#include "StateMachine/Instructions/StateInstructionBase.h"
 #include "BoxParams.generated.h"
 
 
@@ -70,11 +71,5 @@ public:
 		FVector2D HitStop;
 
 	UPROPERTY(EditAnywhere)
-		USoundWave* HitSound;
-
-	UPROPERTY(EditAnywhere)
-		UParticleSystem* HitEffect;
-
-	UPROPERTY(EditAnywhere)
-		FVector HitEffectPosition;
+	TArray<FInstruction> HitInstrucion;
 };
