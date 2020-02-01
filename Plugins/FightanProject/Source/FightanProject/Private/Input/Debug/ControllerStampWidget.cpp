@@ -54,28 +54,28 @@ void UControllerStampWidget::SetElements(const UBufferInputItem* InputItem)
 			switch (InputItem->DirectionAtom.Direction)
 			{
 			case DirectionNotation::DOWN_BACK:
-				DirectionIcon->SetRenderAngle(225);
+				DirectionIcon->SetRenderTransformAngle(225);
 				break;
 			case DirectionNotation::DOWN:
-				DirectionIcon->SetRenderAngle(180);
+				DirectionIcon->SetRenderTransformAngle(180);
 				break;
 			case DirectionNotation::DOWN_FORWARD:
-				DirectionIcon->SetRenderAngle(135);
+				DirectionIcon->SetRenderTransformAngle(135);
 				break;
 			case DirectionNotation::BACK:
-				DirectionIcon->SetRenderAngle(270);
+				DirectionIcon->SetRenderTransformAngle(270);
 				break;
 			case DirectionNotation::FORWARD:
-				DirectionIcon->SetRenderAngle(90);
+				DirectionIcon->SetRenderTransformAngle(90);
 				break;
 			case DirectionNotation::UP_BACK:
-				DirectionIcon->SetRenderAngle(315);
+				DirectionIcon->SetRenderTransformAngle(315);
 				break;
 			case DirectionNotation::UP:
-				DirectionIcon->SetRenderAngle(0);
+				DirectionIcon->SetRenderTransformAngle(0);
 				break;
 			case DirectionNotation::UP_FORWARD:
-				DirectionIcon->SetRenderAngle(45);
+				DirectionIcon->SetRenderTransformAngle(45);
 				break;
 			}
 		}
@@ -93,28 +93,28 @@ void UControllerStampWidget::SetElements(const UBufferInputItem* InputItem)
 			switch (InputItem->ReleasedDirectionAtom.Direction)
 			{
 			case DirectionNotation::DOWN_BACK:
-				ReleasedDirectionIcon->SetRenderAngle(225);
+				ReleasedDirectionIcon->SetRenderTransformAngle(225);
 				break;
 			case DirectionNotation::DOWN:
-				ReleasedDirectionIcon->SetRenderAngle(180);
+				ReleasedDirectionIcon->SetRenderTransformAngle(180);
 				break;
 			case DirectionNotation::DOWN_FORWARD:
-				ReleasedDirectionIcon->SetRenderAngle(135);
+				ReleasedDirectionIcon->SetRenderTransformAngle(135);
 				break;
 			case DirectionNotation::BACK:
-				ReleasedDirectionIcon->SetRenderAngle(270);
+				ReleasedDirectionIcon->SetRenderTransformAngle(270);
 				break;
 			case DirectionNotation::FORWARD:
-				ReleasedDirectionIcon->SetRenderAngle(90);
+				ReleasedDirectionIcon->SetRenderTransformAngle(90);
 				break;
 			case DirectionNotation::UP_BACK:
-				ReleasedDirectionIcon->SetRenderAngle(315);
+				ReleasedDirectionIcon->SetRenderTransformAngle(315);
 				break;
 			case DirectionNotation::UP:
-				ReleasedDirectionIcon->SetRenderAngle(0);
+				ReleasedDirectionIcon->SetRenderTransformAngle(0);
 				break;
 			case DirectionNotation::UP_FORWARD:
-				ReleasedDirectionIcon->SetRenderAngle(45);
+				ReleasedDirectionIcon->SetRenderTransformAngle(45);
 				break;
 			}
 		}
