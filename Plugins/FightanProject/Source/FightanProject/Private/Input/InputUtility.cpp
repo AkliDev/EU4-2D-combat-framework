@@ -83,7 +83,7 @@ bool UInputUtility::ValidateInputSequence(AFightPawn* refObject, const TArray<UB
 	int currentSequenceItemIndex = sequence->Sequence.Num() - 1;
 
 	//index of input item in the buffer from where we start checking for the sequence
-	int inputBufferItemToCheck = FindFirstValidBufferItemIndex(refObject, inputBuffer, sequence->Sequence[currentSequenceItemIndex]);
+	int inputBufferItemToCheck = FindFirstValidBufferItemIndex(refObject, inputBuffer, sequence->Sequence[currentSequenceItemIndex], refObject->GameInstance->MotionLifeTime);
 
 	//if the input item to check is out of the range of the buffer then we will set this variable to the last index of the buffer else we will set this to the inputBufferItemToCheck
 	UBufferInputItem* LastValidInputInBuffer = inputBufferItemToCheck > inputBuffer.Num() ? inputBuffer[inputBufferItemToCheck] : inputBuffer[inputBuffer.Num() - 1];
@@ -141,10 +141,8 @@ bool UInputUtility::ValidateInputSequence(AFightPawn* refObject, const TArray<UB
 /// <summary>Finds the index of the required input in the inbut buffer</summary>
 /// <param name="sel">Reference to subject pawn, an input buffer to search for the first input preferably one owned by the subject pawn and the input stamp to search</param>  
 /// <returns>int, Index at which the first valid input is found. if none is found the count to the input buffer is given to make for loops using this return value immediately exit their iteration</returns> 
-int UInputUtility::FindFirstValidBufferItemIndex(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FInputStamp inputStamp)
-{	//copy motion life time from the settings in the game instance through the refObject
-	float motionLifeTime = refObject->GameInstance->MotionLifeTime;
-
+int UInputUtility::FindFirstValidBufferItemIndex(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FInputStamp inputStamp, float motionLifeTime)
+{	
 	//Iterate through the given input buffer
 	for (int i = 0; i < inputBuffer.Num(); i++)
 	{
@@ -161,6 +159,23 @@ int UInputUtility::FindFirstValidBufferItemIndex(AFightPawn* refObject, const TA
 	}
 	//if the input stamp did not correspond with any input item in the given buffer then we return the length of the buffer  
 	return inputBuffer.Num();
+}
+
+bool UInputUtility::SearchBufferForButton(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FButtonCondition buttonCondition, float motionLifeTime)
+{
+	for (int i = 0; i < inputBuffer.Num(); i++)
+	{
+		//cache the age of the current input item we are checking
+		float inputAge = inputBuffer[i]->GetInputAgeFromBeginTime(UKismetSystemLibrary::GetGameTimeInSeconds(refObject));
+
+		if (ValidateInputState(inputBuffer[i]->InputAtoms[(int)buttonCondition.RequiredButton], buttonCondition.ValidStates) &&
+			inputAge < motionLifeTime)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /// <summary>checks if the given direction corrisponds with the direction of the given input item</summary>

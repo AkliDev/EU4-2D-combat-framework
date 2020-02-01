@@ -32,4 +32,5 @@ public:
 	UPROPERTY(EditAnywhere)
 		UDataTable* BoxInstructionTables;
 
+
 };

@@ -8,6 +8,7 @@
 
 #include "Classes/Particles/ParticleSystemComponent.h"
 #include "Classes/Sound/SoundWave.h"
+#include "Classes/Camera/CameraShake.h"
 
 #include "StateMachine/Events/EventEnums.h"
 
@@ -25,7 +26,7 @@ struct FIGHTANPROJECT_API FInstructionParameter
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
-		uint32 Bool :1;
+		uint32 Bool : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		int Int;
@@ -50,6 +51,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		UParticleSystem* Particle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
+		TSubclassOf<UCameraShake> ScreenRumble;
 };
 
 UCLASS(Blueprintable)

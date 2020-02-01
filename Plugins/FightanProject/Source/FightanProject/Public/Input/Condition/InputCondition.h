@@ -59,7 +59,7 @@ public:
 
 	//Button Input
 	UPROPERTY(EditAnywhere)
-		TArray<Button> RequiredButtons;
+		TArray<FButtonCondition> RequiredButtons;
 };
 
 enum class SequneceType : uint8
@@ -124,4 +124,6 @@ private:
 	FInputValidationResult CheckSequence(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, EBufferLockState lockState);
 	//Returns true if the input with the current given input is valid
 	bool CheckCurrentInput(const UBufferInputItem* currentInput);
+
+	bool CheckBufferWithCurrentInput(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, const UBufferInputItem* currentInput);
 };

@@ -19,12 +19,14 @@
 #include "CharacterStatsComponent.h"
 #include "BoxDataHandlerComponent.h"
 #include "Managers/VFXManager.h"
+#include "Classes/Camera/CameraShake.h"
 #include "FightPawn.generated.h"
 
 
 //Forward declaration to prevent circular dependency 
 struct FStateMachineResult;
 class UFightPawnState;
+class UStateChangeComponent;
 class AFightanProjectGameModeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIsHit, FHitBoxParams&, HitParams);
@@ -126,6 +128,8 @@ protected:
 
 #pragma endregion 
 
+	UStateChangeComponent* StateChange;
+
 	UFUNCTION()
 		void ExecuteTickInstructions();
 
@@ -141,9 +145,6 @@ protected:
 	UFUNCTION()
 		void CheckOnFinishState();
 
-	UFUNCTION(BlueprintCallable)
-		void SwitchState(UFightPawnState* DestinationState);
-
 	UFUNCTION()
 		void SetHitStop(float time);
 
@@ -153,8 +154,6 @@ protected:
 	UFUNCTION()
 		void DoHitRumble();
 
-	UFUNCTION()
-		void FlipCharacter();
 #pragma region Events
 
 	FOnIsHit OnIsHit;
@@ -245,8 +244,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SpawnParticle(UParticleSystem* particle, FVector Position);
 
-	
+	UFUNCTION(BlueprintCallable)
+		void SwitchState(UFightPawnState* DestinationState);
 
+	UFUNCTION(BlueprintCallable)
+		void SetStateChange(UStateChangeComponent* StateChange);
+
+	UFUNCTION(BlueprintCallable)
+		void RumbleScreen(TSubclassOf<UCameraShake> shake);
+
+	UFUNCTION(BlueprintCallable)
+		void FlipCharacter();	
 #pragma endregion 
 };
 

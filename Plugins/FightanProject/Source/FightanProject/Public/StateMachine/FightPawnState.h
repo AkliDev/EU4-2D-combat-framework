@@ -14,6 +14,20 @@
 /**
  *
  */
+class UFightPawnState;
+
+USTRUCT()
+struct FIGHTANPROJECT_API FOnFinishState
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+		UFightPawnState* NextState;
+
+	UPROPERTY(EditAnywhere)
+		float Time;
+};
 
 UCLASS(ClassGroup = StateMachine, Category = "StateMachine", BlueprintType, Blueprintable)
 class FIGHTANPROJECT_API UFightPawnState : public UDataAsset
@@ -51,8 +65,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		uint32 bClearInputbufferOnExit : 1;
 
-public:
-	// Tries out all links in the links array with the given input buffer
-	UFUNCTION()
-		FStateMachineResult TryLinks(AFightPawn* refObject, const UInputBufferComponent* InputBuffer);
+	// State to go when this state has finished;
+	UPROPERTY(EditAnywhere)
+		FOnFinishState OnFinishState;
+
 };
