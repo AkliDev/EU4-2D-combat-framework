@@ -250,8 +250,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetStateChange(UStateChangeComponent* StateChange);
 
-	UFUNCTION(BlueprintCallable)
-		void RumbleScreen(TSubclassOf<UCameraShake> shake);
+	//UFUNCTION(BlueprintCallable)
+	//	void RumbleScreen(TSubclassOf<UCameraShake> shake);
 
 	UFUNCTION(BlueprintCallable)
 		void FlipCharacter();	

@@ -300,10 +300,10 @@ void AFightPawn::SetStateChange(UStateChangeComponent* stateChange)
 	StateChange = stateChange;
 }
 
-void AFightPawn::RumbleScreen(TSubclassOf<UCameraShake> shake)
-{
-	UGameplayStatics::PlayWorldCameraShake(this, shake,FVector::ZeroVector, 1000,1000);
-}
+//void AFightPawn::RumbleScreen(TSubclassOf<UCameraShake> shake)
+//{
+//	UGameplayStatics::PlayWorldCameraShake(this, shake,FVector::ZeroVector, 1000,1000);
+//}
 
 void AFightPawn::SetHitStop(float Time)
 {

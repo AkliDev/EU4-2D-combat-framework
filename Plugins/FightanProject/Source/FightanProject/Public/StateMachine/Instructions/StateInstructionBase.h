@@ -52,8 +52,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
 		UParticleSystem* Particle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
-		TSubclassOf<UCameraShake> ScreenRumble;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Instruction parameter")
+	//	TSubclassOf<UCameraShake> ScreenRumble;
 };
 
 UCLASS(Blueprintable)
