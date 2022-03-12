@@ -40,7 +40,10 @@ public:
 	static bool ValidateInputSequence(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, UInputSequence* sequence);
 	
 	//searches the buffer for the given input stamp and returns its index
-	static int FindFirstValidBufferItemIndex(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FInputStamp inputStamp);
+	static int FindFirstValidBufferItemIndex(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FInputStamp inputStamp, float motionLifeTime);
+
+	//searches the buffer for the given input stamp and returns its index
+	static bool SearchBufferForButton(AFightPawn* refObject, const TArray<UBufferInputItem*>& inputBuffer, FButtonCondition buttonCondition, float motionLifeTime);
 
 	//returns true if the given input item direction is the same as the valid direction
 	static bool ValidateInputDirection(const UBufferInputItem* currentInput, const DirectionNotation validCurrentHoldDirection);
@@ -50,6 +53,7 @@ public:
 
 	//returns true if the buttons of the given input item bitflag corresponds with the valid input buttons
 	//////static bool ValidateInputButton(const UBufferInputItem* currentInput, const Button validCurrentButton);
+
 	//returns true if the given input item bitflag corresponds with the buttons given
 	static bool ValidateInputButtons(const UBufferInputItem* currentInput, const TArray<Button>& validCurrentButtons);
 

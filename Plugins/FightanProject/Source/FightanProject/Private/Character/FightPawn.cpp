@@ -8,6 +8,7 @@
 #include "GameData/Box/BoxInstruction.h"
 #include "Engine/DataTable.h"
 #include "Game/FightanProjectGameModeBase.h"
+#include "Classes/Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -62,8 +63,8 @@ void AFightPawn::BeginPlay()
 	if (AFightanProjectGameModeBase* gameMode = Cast<AFightanProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
 		GameMode = gameMode;
 
-	if (InputBufferComponent != nullptr)
-		InputBufferComponent->BufferItemAdd.AddDynamic(this, &AFightPawn::CheckStateLinks);
+	/*if (InputBufferComponent != nullptr)
+		InputBufferComponent->BufferItemAdd.AddDynamic(this, &AFightPawn::CheckStateLinks);*/
 
 	//EventState subscriptions
 	if (PhysicsComponent != nullptr)
@@ -94,6 +95,7 @@ void AFightPawn::Tick(float DeltaTime)
 	if (HitStopTimer <= 0)
 	{
 		TimeInState += DeltaTime;
+		CheckStateLinks(InputBufferComponent);
 		CheckOnFinishState();
 		PhysicsComponent->UpdateComponent(DeltaTime);
 		BoxDataHandler->UpdateComponent(DeltaTime);
@@ -209,9 +211,12 @@ void AFightPawn::ExecuteInstructions(TArray<FInstruction>& instructions)
 /// <returns>void</returns>  
 void AFightPawn::CheckStateLinks(const UInputBufferComponent* BufferComponent)
 {
+	if (HitStopTimer > 0 || StateChange == nullptr)
+		return;
+
 	FStateMachineResult result;
 
-	result = CurrentState->TryLinks(this, BufferComponent);
+	result = StateChange->TryLinks(this, BufferComponent);
 
 	if (result.DestinationState != nullptr)
 	{
@@ -240,17 +245,14 @@ void AFightPawn::CheckEventStates(Events event)
 
 void AFightPawn::CheckOnFinishState()
 {
-	if (CurrentState->StateChangeComponent == nullptr)
-		return;
-	if (CurrentState->StateChangeComponent->OnFinishState.NextState == nullptr)
+	if (CurrentState->OnFinishState.NextState == nullptr)
 		return;
 
-	if (TimeInState >= CurrentState->StateChangeComponent->OnFinishState.Time)
+	if (TimeInState >= CurrentState->OnFinishState.Time)
 	{
-		SwitchState(CurrentState->StateChangeComponent->OnFinishState.NextState);
+		SwitchState(CurrentState->OnFinishState.NextState);
 		CheckStateLinks(InputBufferComponent);
 	}
-
 }
 
 /// <summary>Switches the current state of the pawn with the given state</summary>
@@ -269,6 +271,7 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	//switch to destination state
 	CurrentState = DestinationState;
 
+	StateChange = CurrentState->StateChangeComponent;
 	if (CurrentState->StateBehaviour != nullptr)
 		//execute states enter instructions
 		ExecuteInstructions(CurrentState->StateBehaviour->OnEnterInstructions);
@@ -291,6 +294,16 @@ void AFightPawn::SwitchState(UFightPawnState* DestinationState)
 	Flipbook->PlayFromStart();
 	ExecuteTickInstructions();
 }
+
+void AFightPawn::SetStateChange(UStateChangeComponent* stateChange)
+{
+	StateChange = stateChange;
+}
+
+//void AFightPawn::RumbleScreen(TSubclassOf<UCameraShake> shake)
+//{
+//	UGameplayStatics::PlayWorldCameraShake(this, shake,FVector::ZeroVector, 1000,1000);
+//}
 
 void AFightPawn::SetHitStop(float Time)
 {

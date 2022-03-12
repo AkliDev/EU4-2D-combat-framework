@@ -11,18 +11,6 @@
  *
  */
 
-USTRUCT()
-struct FIGHTANPROJECT_API FOnFinishState
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-		UFightPawnState* NextState;
-
-	UPROPERTY(EditAnywhere)
-		float Time;
-};
 UCLASS()
 class FIGHTANPROJECT_API UStateChangeComponent : public UDataAsset
 {
@@ -33,7 +21,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<UStateLink*> Links;
 
-	// State to go when this state has finished;
-	UPROPERTY(EditAnywhere)
-		FOnFinishState OnFinishState;
+public:
+	// Tries out all links in the links array with the given input buffer
+	UFUNCTION()
+		FStateMachineResult TryLinks(AFightPawn* refObject, const UInputBufferComponent* InputBuffer);
 };
