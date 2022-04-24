@@ -42,7 +42,7 @@ void UBufferInputItem::UpdateInputItem(uint32 inputBitflag, uint32 previousInput
 
 	//Iterate through the bits the represents buttons in the input bitflag
 	//Compares the bits to the one of the previous Input Bitflag
-	for (uint8 i = 0; i < (uint8)Button::NUM; i++)
+	for (uint8 i = 0; i < (uint8)FaceButton::NUM; i++)
 	{
 		uint32 bitmask = 1 << i;
 		if (InputBitflag & bitmask)
@@ -55,9 +55,9 @@ void UBufferInputItem::UpdateInputItem(uint32 inputBitflag, uint32 previousInput
 
 	//Iterate through the bits the represents cardinal direction in the input bitflag
 	//Compares the bits to the one of the previous Input Bitflag
-	for (uint8 i = (uint8)Button::NUM; i < (uint8)Button::NUM + (uint8)CardinalDirection::NUM; i++)
+	for (uint8 i = (uint8)FaceButton::NUM; i < (uint8)FaceButton::NUM + (uint8)CardinalDirection::NUM; i++)
 	{
-		uint32 bitmask = (1 << (i - (uint8)Button::NUM + 32 - (uint8)CardinalDirection::NUM));
+		uint32 bitmask = (1 << (i - (uint8)FaceButton::NUM + 32 - (uint8)CardinalDirection::NUM));
 		if (InputBitflag & bitmask)
 			InputAtoms[i].Hold(deltaTime);
 		if ((InputBitflag & bitmask) != bitmask && (previousInputBitflag & bitmask) == bitmask)

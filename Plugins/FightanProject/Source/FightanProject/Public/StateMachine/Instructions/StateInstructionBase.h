@@ -8,7 +8,7 @@
 
 #include "Classes/Particles/ParticleSystemComponent.h"
 #include "Classes/Sound/SoundWave.h"
-#include "Classes/Camera/CameraShake.h"
+//#include "Camera/CameraShake.h"
 
 #include "StateMachine/Events/EventEnums.h"
 

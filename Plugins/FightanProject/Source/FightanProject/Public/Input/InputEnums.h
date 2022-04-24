@@ -41,7 +41,7 @@ enum class InputState : int8
 };
 
 UENUM(Blueprintable, Meta = (Bitflags))
-enum class Button : uint8
+enum class FaceButton : uint8
 {
 	BUTTON1,
 	BUTTON2,

@@ -38,13 +38,13 @@ void UInputBufferComponent::BeginPlay()
 
 	//Create and initialize Current input class
 	CurrentInput = NewObject<UBufferInputItem>();
-	CurrentInput->Init((uint32)CardinalDirection::NUM + (uint32)Button::NUM);
+	CurrentInput->Init((uint32)CardinalDirection::NUM + (uint32)FaceButton::NUM);
 
 	//Create and initialize Current input classes. These together are the Input buffer
 	for (uint32 i = 0; i < BufferSize; i++)
 	{
 		InputBuffer.Add(NewObject<UBufferInputItem>());
-		InputBuffer[i]->Init((uint32)CardinalDirection::NUM + (uint32)Button::NUM);
+		InputBuffer[i]->Init((uint32)CardinalDirection::NUM + (uint32)FaceButton::NUM);
 	}
 }
 
