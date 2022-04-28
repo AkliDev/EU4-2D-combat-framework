@@ -221,7 +221,7 @@ bool UInputUtility::ValidateInputDirections(const UBufferInputItem* currentInput
 /// <summary>Checks weather the the given buttons are pressed in the given input item </summary>
 /// <param name="sel">input buffer item to check, bottons to validate</param>  
 /// <returns>bool, weather  one of the given directions corresponds with the direction of the input item  </returns> 
-bool UInputUtility::ValidateInputButtons(const UBufferInputItem* currentInput, const TArray<Button>& requiredCurrentButtons)
+bool UInputUtility::ValidateInputButtons(const UBufferInputItem* currentInput, const TArray<FaceButton>& requiredCurrentButtons)
 {
 	//create an empty bit mask
 	uint32 bitmask = 0;
@@ -229,7 +229,7 @@ bool UInputUtility::ValidateInputButtons(const UBufferInputItem* currentInput, c
 	uint32 currentInputBitFlag = currentInput->InputBitflag;
 
 	//itereate through the given buttons and set the corresponding bits in the bitmak
-	for (Button button : requiredCurrentButtons)
+	for (FaceButton button : requiredCurrentButtons)
 	{
 		bitmask |= (1 << (uint32)button);
 	}

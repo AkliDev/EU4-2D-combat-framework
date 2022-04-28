@@ -24,7 +24,7 @@ struct FIGHTANPROJECT_API FButtonCondition
 public:
 	//Button Input
 	UPROPERTY(EditAnywhere)
-		Button RequiredButton;
+		FaceButton RequiredButton;
 
 	//Button State
 	UPROPERTY(EditAnywhere)

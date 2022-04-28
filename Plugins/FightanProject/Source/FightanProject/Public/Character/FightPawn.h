@@ -19,7 +19,7 @@
 #include "CharacterStatsComponent.h"
 #include "BoxDataHandlerComponent.h"
 #include "Managers/VFXManager.h"
-#include "Classes/Camera/CameraShake.h"
+//#include "Camera/CameraShake.h"
 #include "FightPawn.generated.h"
 
 

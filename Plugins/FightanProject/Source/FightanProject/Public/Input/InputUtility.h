@@ -55,7 +55,7 @@ public:
 	//////static bool ValidateInputButton(const UBufferInputItem* currentInput, const Button validCurrentButton);
 
 	//returns true if the given input item bitflag corresponds with the buttons given
-	static bool ValidateInputButtons(const UBufferInputItem* currentInput, const TArray<Button>& validCurrentButtons);
+	static bool ValidateInputButtons(const UBufferInputItem* currentInput, const TArray<FaceButton>& validCurrentButtons);
 
 
 	static bool ValidateInputState(const FInputAtom inputAtom, const InputState validButtonState);

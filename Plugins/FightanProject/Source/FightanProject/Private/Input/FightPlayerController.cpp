@@ -89,73 +89,73 @@ void AFightPlayerController::RightReleased()
 
 void AFightPlayerController::Button1Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON1);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON1);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button1Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON1);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON1);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button2Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON2);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON2);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button2Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON2);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON2);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button3Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON3);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON3);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button3Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON3);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON3);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button4Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON4);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON4);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button4Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON4);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON4);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button5Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON5);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON5);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button5Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON5);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON5);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button6Pressed()
 {
-	ControllerBitFlag |= (1 << (int32)Button::BUTTON6);
+	ControllerBitFlag |= (1 << (int32)FaceButton::BUTTON6);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
 void AFightPlayerController::Button6Released()
 {
-	ControllerBitFlag &= ~(1 << (int32)Button::BUTTON6);
+	ControllerBitFlag &= ~(1 << (int32)FaceButton::BUTTON6);
 	NewInput.Broadcast(ControllerBitFlag);
 }
 
